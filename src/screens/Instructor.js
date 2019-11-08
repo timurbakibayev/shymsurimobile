@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
+import {Text, View, ScrollView, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {TopSlider} from "../components/common/TopSlider";
 import {Header} from "../components/common/Header";
 import {List, ListItem, Button, SearchBar, CheckBox} from 'react-native-elements';
@@ -184,13 +184,18 @@ class Instructor extends React.Component {
                     trainer = instructorLoadedTrainers[i];
                 }
             }
-            const {name, phone, rating} = trainer;
+            const {name, phone, rating, photo} = trainer;
             // console.log("This is data of trainer ", trainer);
             return (
                 <ScrollView style={{marginTop: 15}}>
-                    <Header headerText={"Shymbulak Ski & Snowboard School"}
+                    <Header headerText={`${name}`}
                             onLogoutPressed={this.logoutPressed.bind(this)}
+                            style={{width: '70%'}}
                     />
+                    <View style={{ alignItems: 'center', margin: 10}}>
+                    <View style={{width: 120, height: 120, borderRadius: '50%', overflow: 'hidden'}}>
+                        <Image style={{width: 120, height: 120}} source={{uri: `https://instructor-shym.kz${photo}`}}
+                        /></View></View>
                     <TopSlider
                         currentDate={this.props.instructorCurrentDate}
                         onLeftPressed={this.leftPressed.bind(this)}
@@ -222,31 +227,21 @@ class Instructor extends React.Component {
                         />
                         <ListItem
                             title="Рейтинг"
-                            rightTitle={rating}
+                            rightTitle={`${rating}`}
                             hideChevron
                             rightTitleStyle={{color: '#000', fontSize: 16}}
                         />
                         {this.getSpecialization(trainer)}
                     </List>
 
-                    <Button
-                        buttonStyle={styles.buttonStyle}
-                        raised
-                        backgroundColor='#1668B5'
-                        title='Добавить Занятие'
-                        onPress={() => this.onAddEvent()}
-                    />
-                    {this.renderAdditionalForm(trainer)}
                     {this.renderEvents(trainer)}
-                    <Button
-                        buttonStyle={styles.buttonStyle}
-                        raised
-                        backgroundColor='#1668B5'
-                        title='Отчет'
-                        onPress={() => this.onShowReport()}
-                    />
-                    {this.renderReportForm()}
+
+                    {this.renderAdditionalForm(trainer)}
+
+
                     {this.renderReports(trainer)}
+                    {this.renderReportForm()}
+
 
                 </ScrollView>
             )
@@ -280,7 +275,8 @@ class Instructor extends React.Component {
         const {id, name, rating} = instructor;
         if (id === report[0]) {
             return (
-                <CellVariant name={report[1]}
+                <CellVariant key={id}
+                                 name={report[1]}
                              title2={report[2]}
                              title3={report[3]}
                              title4={report[4]}/>
@@ -299,11 +295,15 @@ class Instructor extends React.Component {
 
     renderReportForm() {
         const {buttonStyle} = styles;
-        if (this.props.instructorShowReportForm) {
+        if (2+2==4 || this.props.instructorShowReportForm) {
             return (
-                <View style={{flex: 1}}>
+                <View style={{flex: 1, margin: 10, borderStyle: 'solid', borderRadius: '30%', borderColor: 'Black',
+                                borderWidth: 2, padding: 10, alignItems: 'center'}}>
+                    <Text align='center' style={{width: '100%', textAlign: 'center', alignItems: 'center'}}>
+                        Новый отчет:
+                    </Text>
                     <DatePicker
-                        style={{width: 200}}
+                        style={{width: 200, margin: 15}}
                         date={this.props.instructorReportStart}
                         mode="date"
                         placeholder="Дата начала"
@@ -327,10 +327,10 @@ class Instructor extends React.Component {
                     />
 
                     <DatePicker
-                        style={{width: 200}}
+                        style={{width: 200, margin: 15}}
                         date={this.props.instructorReportEnd}
                         mode="date"
-                        placeholder="Дата начала"
+                        placeholder="Дата конца"
                         format="YYYY-MM-DD"
                         minDate="2016-05-01"
                         // maxDate="2017-12-31"
@@ -353,7 +353,7 @@ class Instructor extends React.Component {
                         buttonStyle={buttonStyle}
                         raised
                         backgroundColor='#1668B5'
-                        title='Применить'
+                        title='Показать отчет'
                         onPress={() => this.getReport()}/>
                 </View>
             )
@@ -423,12 +423,16 @@ class Instructor extends React.Component {
         const {buttonStyle} = styles;
         const {instructorsCurrentDate, user} = this.props;
         let data = [["1 час", "1,5 часа", "2 часа"]];
-        if (this.props.instructorShowAddEventForm) {
+        if (2+2==4 || this.props.instructorShowAddEventForm) {
             // this.updateEvents(user, instructorsCurrentDate);
             return (
-                <View styel={{flex: 1}}>
+                <View style={{flex: 1, margin: 10, borderStyle: 'solid', borderRadius: '30%', borderColor: 'Black',
+                                borderWidth: 2, padding: 10, alignItems: 'center'}}>
+                    <Text style={{textAlign: 'center', alignItems: 'center'}}>
+                        Новое занятие:
+                    </Text>
                     <DatePicker
-                        style={{width: 200}}
+                        style={{width: 200, margin: 15}}
                         date={this.props.instructorEventStart}
                         mode="datetime"
                         placeholder="Дата начала"
@@ -450,25 +454,9 @@ class Instructor extends React.Component {
                         }}
                         onDateChange={this.onInstructorEventDateStart.bind(this)}
                     />
-                    <View style={{flex: 1, marginBottom: 120}}>
+                    <View style={{flex: 1, marginBottom: 120, flexDirection: 'column'}}>
 
-                        <DropdownMenu style={{flex: 1}}
-
-                                      bgColor={"#1668B5"}
-                                      tintColor={"white"}
-                                      selectItemColor={"#1668B5"}
-                                      data={data}
-                                      maxHeight={410}
-                            //              handler={(selection, row) => alert(data[selection][row])}
-                            //           handler={(selection, row) => console.log("This is selection", selection, row)}
-                                      handler={(selection, row) => this.onInstructorEventDateEnd(row)}
-                        >
-                            {/*<View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>*/}
-                            {/*<Text>*/}
-                            {/*Your own view Here*/}
-                            {/*</Text>*/}
-                            {/*</View>*/}
-                            <View>
+                        <View style={{flexDirection: 'row'}}>
                                 <CheckBox
                                     left
                                     title='Лыжи'
@@ -485,16 +473,33 @@ class Instructor extends React.Component {
                                     uncheckedIcon='circle-o'
                                     checked={this.props.instructorSkillSnowboard}
                                 />
-                            </View>
+                        </View>
 
-                        </DropdownMenu>
+                        <DropdownMenu
+
+                                      bgColor={"#BBBBBB"}
+                                      color={'black'}
+                                      tintColor={"white"}
+                                      selectItemColor={"#1668B5"}
+                                      data={data}
+                                      maxHeight={410}
+                            //              handler={(selection, row) => alert(data[selection][row])}
+                            //           handler={(selection, row) => console.log("This is selection", selection, row)}
+                                      handler={(selection, row) => this.onInstructorEventDateEnd(row)}
+                        />
+                            {/*<View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>*/}
+                            {/*<Text>*/}
+                            {/*Your own view Here*/}
+                            {/*</Text>*/}
+                            {/*</View>*/}
+
                     </View>
 
                     <Button
                         buttonStyle={buttonStyle}
                         raised
                         backgroundColor='#1668B5'
-                        title='Сохранить'
+                        title='Добавить занятие'
                         onPress={() => this.onSaveEvent(trainer)}/>
                 </View>
             )
@@ -565,11 +570,12 @@ class Instructor extends React.Component {
     instructorTraining(training) {
         if (training[5]) {
             return (
-                <Cell
+                <Cell key={training[0]+training[1]}
                     cellContentView={
                         <View
                             style={{alignItems: 'center', flexDirection: 'row', flex: 1, paddingVertical: 10}}>
 
+                            <View style={{flexDirection: 'column'}}>
                             <Text
                                 allowFontScaling
                                 numberOfLines={1}
@@ -583,6 +589,7 @@ class Instructor extends React.Component {
                                 style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
                                 {training[1]}
                             </Text>
+                            </View>
 
                             <Text
                                 allowFontScaling
@@ -659,19 +666,22 @@ const TrainingCell = (props) => (
             <View
                 style={{alignItems: 'center', flexDirection: 'row', flex: 1, paddingVertical: 10}}>
 
-                <Text
-                    allowFontScaling
-                    numberOfLines={1}
-                    style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
-                    {props.name}
-                </Text>
+                <View style={{flexDirection: 'column'}}>
+                    <Text
+                        allowFontScaling
+                        numberOfLines={1}
+                        style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
+                        {props.name}
+                    </Text>
 
-                <Text
-                    allowFontScaling
-                    numberOfLines={1}
-                    style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
-                    {props.title2}
-                </Text>
+                    <Text
+                        allowFontScaling
+                        numberOfLines={1}
+                        style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
+                        {props.title2}
+                    </Text>
+                </View>
+
                 <Text
                     allowFontScaling
                     numberOfLines={1}

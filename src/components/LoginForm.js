@@ -28,14 +28,12 @@ class LoginForm extends React.Component {
     componentWillMount() {
         AsyncStorage.getItem("userName").then((userName) => {
             if (userName) {
-                console.log("This is userName in Login", userName);
                 this.props.userNameChanged(userName);
             }
         });
 
         AsyncStorage.getItem("password").then((password) => {
             if (password) {
-                console.log("This is password", password);
                 this.props.passwordChanged(password);
             }
         });
@@ -43,7 +41,8 @@ class LoginForm extends React.Component {
         AsyncStorage.getItem("token").then((token) => {
             if (token) {
                 console.log("This is in Login making user login");
-                this.props.setUserLoggedIn();
+                //this.props.setUserLoggedIn();
+                //this.props.loginUser({userName, password});
             }
         });
     }

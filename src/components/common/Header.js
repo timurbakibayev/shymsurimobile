@@ -43,7 +43,9 @@ const Header = ({onReturnPressed, onLogoutPressed, headerText}) => {
                         name="arrow-left" size={20} backgroundColor={"#1668B5"}
                     />
                 </TouchableOpacity>
-                <Text style={styles.textStyle}>{headerText}</Text>
+                <View style={{flex: 0.5}}>
+                    <Text style={{...styles.textStyle, width: '75%'}}>{headerText}</Text>
+                </View>
                 {/*<TouchableOpacity*/}
                 {/*style={styles.toolbarButton}/>*/}
                 <TouchableOpacity onPress={onLogoutPressed}
@@ -61,7 +63,9 @@ const Header = ({onReturnPressed, onLogoutPressed, headerText}) => {
                 <TouchableOpacity
                     style={styles.toolbarButton}
                 />
+                <View style={{flex: 0.8}}>
                 <Text style={styles.textStyle}>{headerText}</Text>
+                    </View>
                 <TouchableOpacity onPress={onLogoutPressed}
                                   style={styles.toolbarButton}
                 >
@@ -134,6 +138,7 @@ const styles = StyleSheet.create({
     textStyle: {
         fontSize: 16,
         alignSelf: 'center',
+        alignContent: 'center',
         color: "#1668b5",
         justifyContent: 'center',
         fontWeight: '600'
@@ -148,10 +153,7 @@ const styles = StyleSheet.create({
     },
     toolbarButton: {
         alignSelf: 'center',
-        paddingTop: 10,
-        paddingBottom: 10,
-        paddingLeft: 10,
-        paddingRight: 10
+        padding: 10
     },
     toolbarTitle: {
         justifyContent: 'center',

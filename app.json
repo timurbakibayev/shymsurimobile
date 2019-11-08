@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Shymbulak",
-    "slug": "shymsuri",
+    "name": "Suri Mobile",
+    "slug": "surimobile",
     "privacy": "public",
     "sdkVersion": "35.0.0",
     "platforms": [
@@ -24,7 +24,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sagrad.surimobile"
     }
   }
 }
