@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Suri Mobile",
-    "slug": "surimobile",
+    "name": "Shymbulak Ski School",
+    "slug": "surimobileinfo",
     "privacy": "public",
     "sdkVersion": "35.0.0",
     "platforms": [
@@ -9,7 +9,7 @@
       "android",
       "web"
     ],
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -25,7 +25,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sagrad.surimobile"
+      "bundleIdentifier": "com.sagrad.surimobileinfo"
     }
   }
 }

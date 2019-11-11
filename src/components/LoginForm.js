@@ -5,12 +5,20 @@ import {userNameChanged, passwordChanged, loginUser, setUserLoggedIn} from "../a
 import {Card, CardSection, Input, Spinner} from "./common";
 import {FormLabel, FormInput, Button} from 'react-native-elements';
 import {LOGOUT_SUCCESS_TEXT, VERSION} from "../actions/types";
+import WelcomeScreen from '../screens/welcome';
 
 // import OneSignal from 'react-native-onesignal';
 
 
 class LoginForm extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            started: false,
+        };
+        self = this;
+    }
 
     // componentWillMount(){
     //     OneSignal.addEventListener('ids', this.onIds);
@@ -94,48 +102,56 @@ class LoginForm extends React.Component {
         }
     }
 
+    start() {
+        this.setState({started: true});
+    }
+
     render() {
         const {container, outerContainer, errorTextStyle, imageStyle} = styles;
 
+        if (this.state.started)
+            return (
+                <KeyboardAvoidingView
+                    style={container}
+                    behavior="padding">
+
+                    <View style={outerContainer}>
+                        <Image source={require('../img/logo.png')} style={imageStyle}/>
+
+
+                        <FormLabel>Логин</FormLabel>
+                        <FormInput
+                            autoCorrect={false}
+                            autoCapitalize='none'
+                            placeholder="Логин"
+                            onChangeText={this.onUserNameChange.bind(this)}
+                            value={this.props.userName}
+                        />
+                        <FormLabel>Пароль</FormLabel>
+                        <FormInput
+                            autoCorrect={false}
+                            autoCapitalize='none'
+                            secureTextEntry
+                            placeholder="Пароль"
+                            onChangeText={this.onPasswordChange.bind(this)}
+                            value={this.props.password}
+                        />
+                        <Text style={errorTextStyle}>
+                            {this.props.error}
+                        </Text>
+                        {this.renderLoggedOut()}
+                        <CardSection>
+                            {this.renderButton()}
+                        </CardSection>
+
+                        <Text>{VERSION}</Text>
+
+                    </View>
+                </KeyboardAvoidingView>
+            );
         return (
-            <KeyboardAvoidingView
-                style={container}
-                behavior="padding">
-
-                <View style={outerContainer}>
-                    <Image source={require('../img/logo.png')} style={imageStyle}/>
-
-
-                    <FormLabel>Логин</FormLabel>
-                    <FormInput
-                        autoCorrect={false}
-                        autoCapitalize='none'
-                        placeholder="Логин"
-                        onChangeText={this.onUserNameChange.bind(this)}
-                        value={this.props.userName}
-                    />
-                    <FormLabel>Пароль</FormLabel>
-                    <FormInput
-                        autoCorrect={false}
-                        autoCapitalize='none'
-                        secureTextEntry
-                        placeholder="Пароль"
-                        onChangeText={this.onPasswordChange.bind(this)}
-                        value={this.props.password}
-                    />
-                    <Text style={errorTextStyle}>
-                        {this.props.error}
-                    </Text>
-                    {this.renderLoggedOut()}
-                    <CardSection>
-                        {this.renderButton()}
-                    </CardSection>
-
-                    <Text>{VERSION}</Text>
-
-                </View>
-            </KeyboardAvoidingView>
-        );
+            <WelcomeScreen start={this.start.bind(this)}/>
+        )
     }
 }
 

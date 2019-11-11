@@ -61,6 +61,16 @@ import {Header} from "../components/common/Header";
 import {URL} from "../const";
 
 class Instructors extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            filterText: ''
+        };
+
+    }
+
     onLearnMore = (instructor, events) => {
         this.props.navigation.navigate('Details', {...instructor, events});
     };
@@ -217,13 +227,15 @@ class Instructors extends React.Component {
         let instructorsNotAtWork = [];
         for (let i = 0; i < trainersAtWork.length; i++) {
             if (trainersAtWork[i].at_work) {
-                instructorsAtWork.push(trainersAtWork[i]);
+                if (this.state.filterText === '' || trainersAtWork[i].name.toUpperCase().includes(this.state.filterText.toUpperCase()))
+                    instructorsAtWork.push(trainersAtWork[i]);
             }
         }
 
         for (let i = 0; i < trainersAtWork.length; i++) {
             if (!trainersAtWork[i].at_work) {
-                instructorsNotAtWork.push(trainersAtWork[i]);
+                if (this.state.filterText === '' || trainersAtWork[i].name.toUpperCase().includes(this.state.filterText.toUpperCase()))
+                    instructorsNotAtWork.push(trainersAtWork[i]);
             }
         }
         return (
@@ -299,7 +311,8 @@ class Instructors extends React.Component {
     }
 
     someMethod(text) {
-        this.props.searchingFor(text);
+        // this.props.searchingFor(text);
+        this.setState({filterText: text})
     }
 
     getSpecialization(instructor) {
