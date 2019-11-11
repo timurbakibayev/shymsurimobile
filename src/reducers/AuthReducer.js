@@ -20,8 +20,10 @@ export default (state = INITIAL_STATE, action) => {
         case PASSWORD_CHANGED:
             return {...state, password: action.payload, loggedOut: false};
         case LOGIN_USER_SUCCESS:
+            console.log('LOGIN_USER_SUCCESS event');
             return {...state, ...INITIAL_STATE, user: action.payload, isLoggedIn: true, loggedOut: false};
         case LOGIN_USER_FAIL:
+            console.log('LOGIN_USER_FAIL event');
             return {
                 ...state,
                 error: 'Неверный логин или пароль',
@@ -31,10 +33,13 @@ export default (state = INITIAL_STATE, action) => {
                 loggedOut: false
             };
         case LOGIN_USER:
+            console.log('LOGIN_USER event');
             return {...state, error: '', isLoading: 'true', isLoggedIn: false, loggedOut: false};
         case USER_LOGGED_IN:
+            console.log('USER_LOGGED_IN event');
             return {...state, isLoggedIn: true, loggedOut: false};
         case USER_LOGOUT:
+            console.log('USER_LOGOUT event');
             return {...state, isLoggedIn: false, user: '', loggedOut: true};
         default :
             return state;

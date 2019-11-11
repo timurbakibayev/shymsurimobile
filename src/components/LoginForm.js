@@ -18,6 +18,11 @@ class LoginForm extends React.Component {
             started: false,
         };
         self = this;
+        AsyncStorage.getItem("admin_aread").then((password) => {
+            if (password === 'iddqd') {
+                self.setState({started: true});
+            }
+        });
     }
 
     // componentWillMount(){
@@ -34,6 +39,13 @@ class LoginForm extends React.Component {
 
 
     componentWillMount() {
+        self = this;
+        AsyncStorage.getItem("admin_aread").then((password) => {
+            if (password === 'iddqd') {
+                self.setState({started: true});
+            }
+        });
+
         AsyncStorage.getItem("userName").then((userName) => {
             if (userName) {
                 this.props.userNameChanged(userName);
@@ -49,8 +61,8 @@ class LoginForm extends React.Component {
         AsyncStorage.getItem("token").then((token) => {
             if (token) {
                 console.log("This is in Login making user login");
-                //this.props.setUserLoggedIn();
-                //this.props.loginUser({userName, password});
+                // this.props.setUserLoggedIn();
+                // this.props.loginUser({userName, password});
             }
         });
     }
@@ -104,6 +116,7 @@ class LoginForm extends React.Component {
 
     start() {
         this.setState({started: true});
+        AsyncStorage.setItem("admin_area", "iddqd");
     }
 
     render() {

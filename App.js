@@ -10,20 +10,7 @@ import {Text} from 'react-native';
 // import { createStackNavigator } from 'react-navigation-stack';
 import { SimpleLineIcons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import reducers from './src/reducers';
-import DrawerContent from './src/components/drawerContent';
-// import InstructionsScreen from './screens/instructions';
-import AuthenticateScreen from './src/screens/authenticate';
-// import NotImplementedScreen from './screens/notImplemented';
-import WelcomeScreen from './src/screens/welcome';
-// import NewsScreen from './screens/news';
-// import DisciplinesScreen from './screens/disciplines';
-// import AnnouncementsScreen from './screens/announcements';
-// import DatabaseScreen from './screens/database';
-import OmbudsmanScreen from './src/screens/ombudsman';
-// import ScheduleScreen from './screens/schedule';
-
 import Main from './src/components/Main'
-
 
 export default class App extends React.Component {
     state = {

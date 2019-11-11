@@ -3,7 +3,7 @@ import {
     TRAINER_PHONE_CHANGED,
     TRAINER_RATING_CHANGED, TRAINER_SKI, TRAINER_SNOWBOARD, URL
 } from "./types";
-// import {URL} from "../const";
+import {URL} from "../const";
 
 export const addTrainer = ({
                                user, trainerName,

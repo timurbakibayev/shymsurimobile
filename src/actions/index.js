@@ -16,7 +16,7 @@ export const passwordChanged = text => ({
     payload: text
 });
 
-export const setUserLoggedIn = () => ({types: USER_LOGGED_IN});
+export const setUserLoggedIn = () => ({type: USER_LOGGED_IN});
 
 export const loginUser = ({userName, password}) => {
     return (dispatch) => {

@@ -6,7 +6,6 @@ import logo_shym from '../img/shymbulak_logo.png';
 import instr1 from '../img/Pedus-Sergej-kopiya-400x600.jpg';
 import instr2 from '../img/Ahmetov-Damir-400x600.jpg';
 import instr3 from '../img/Stenin-Radion-3-kopiya-400x600.jpg';
-import ReactFlowPlayer from "react-flow-player";
 import { Linking, TouchableHighlight } from 'react-native'
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
