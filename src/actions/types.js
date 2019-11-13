@@ -113,4 +113,4 @@ export const USER_LOGGED_IN = 'user_logged_in';
 // export const URL = "http://185.111.107.61/";
 export const URL = 'https://instructor-shym.kz/';
 
-export const VERSION = 'SAGRAD v 2.0 11.11.18';
+export const VERSION = 'SAGRAD v 3.26 12.11.18';

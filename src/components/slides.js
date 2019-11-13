@@ -67,7 +67,7 @@ class Slides extends Component {
                         height: SCREEN_WIDTH/4,
                         marginTop: -SCREEN_HEIGHT/4,
                     }} source={logo_shym}/>
-                    <Text style={{...styles.slideText, fontSize: 15}}>Катание на горных лыжах – увлекательное и полезное
+                    <Text style={{...styles.slideText, fontSize: 20}}>Катание на горных лыжах – увлекательное и полезное
                         для здоровья занятие, учиться которому никогда не поздно. Главная цель нашей школы – научить всех
                         желающих красиво, технично и безопасно кататься по склонам «Шымбулака» и любым трассам мира!</Text>
                     <Text style={{color: 'blue', fontSize: 20, marginTop: 20}}

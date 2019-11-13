@@ -137,7 +137,7 @@ class Instructor extends React.Component {
 
     updateEvents() {
         const {user, instructorCurrentDate} = this.props;
-        console.log("This is the date", instructorCurrentDate);
+        //console.log("This is the date", instructorCurrentDate);
         if (instructorCurrentDate) {
             this.props.getEventOnSelectedDate(user, instructorCurrentDate);
         }
@@ -158,9 +158,9 @@ class Instructor extends React.Component {
 
     render() {
         const {instructorLoadedTrainers, user, instructorCurrentDate, instructorAtWork} = this.props;
-        console.log("this is loaded trainr and evnets ", instructorLoadedTrainers, instructorCurrentDate);
+        //console.log("this is loaded trainr and evnets ", instructorLoadedTrainers, instructorCurrentDate);
         if (this.props.reload) {
-            console.log("I'm reloading");
+            //console.log("I'm reloading");
             this.updateEvents(user, instructorCurrentDate);
         }
         if (instructorAtWork) {
@@ -247,7 +247,7 @@ class Instructor extends React.Component {
             )
         } else {
             return (
-                <Text>This is the end</Text>
+                <Text>-</Text>
             )
         }
     }

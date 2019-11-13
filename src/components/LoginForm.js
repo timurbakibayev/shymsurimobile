@@ -1,5 +1,14 @@
 import React from 'react';
-import {StyleSheet, View, Text, Image, ScrollView, KeyboardAvoidingView, AsyncStorage} from 'react-native';
+import {
+    StyleSheet,
+    View,
+    Text,
+    Image,
+    ScrollView,
+    KeyboardAvoidingView,
+    AsyncStorage,
+    TouchableHighlight
+} from 'react-native';
 import {connect} from 'react-redux';
 import {userNameChanged, passwordChanged, loginUser, setUserLoggedIn} from "../actions";
 import {Card, CardSection, Input, Spinner} from "./common";
@@ -18,7 +27,7 @@ class LoginForm extends React.Component {
             started: false,
         };
         self = this;
-        AsyncStorage.getItem("admin_aread").then((password) => {
+        AsyncStorage.getItem("admin_area").then((password) => {
             if (password === 'iddqd') {
                 self.setState({started: true});
             }
@@ -38,34 +47,31 @@ class LoginForm extends React.Component {
     // }
 
 
-    componentWillMount() {
+    async componentWillMount() {
         self = this;
-        AsyncStorage.getItem("admin_aread").then((password) => {
+        await AsyncStorage.getItem("admin_area").then((password) => {
             if (password === 'iddqd') {
                 self.setState({started: true});
             }
         });
 
-        AsyncStorage.getItem("userName").then((userName) => {
-            if (userName) {
-                this.props.userNameChanged(userName);
-            }
-        });
+        const userName = await AsyncStorage.getItem("userName");
 
-        AsyncStorage.getItem("password").then((password) => {
-            if (password) {
-                this.props.passwordChanged(password);
-            }
-        });
+        self.props.userNameChanged(userName);
 
-        AsyncStorage.getItem("token").then((token) => {
-            if (token) {
+        const password = await AsyncStorage.getItem("password");
+
+        self.props.passwordChanged(password);
+
+        const token = await AsyncStorage.getItem("token");
+
+        if (token) {
                 console.log("This is in Login making user login");
                 // this.props.setUserLoggedIn();
-                // this.props.loginUser({userName, password});
+                this.props.loginUser({userName, password});
             }
-        });
-    }
+        };
+
 
     onUserNameChange(text) {
         this.props.userNameChanged(text);
@@ -119,6 +125,12 @@ class LoginForm extends React.Component {
         AsyncStorage.setItem("admin_area", "iddqd");
     }
 
+    unstart() {
+        this.setState({started: false});
+        AsyncStorage.setItem("admin_area", "");
+        AsyncStorage.setItem("token", "");
+    }
+
     render() {
         const {container, outerContainer, errorTextStyle, imageStyle} = styles;
 
@@ -129,7 +141,9 @@ class LoginForm extends React.Component {
                     behavior="padding">
 
                     <View style={outerContainer}>
-                        <Image source={require('../img/logo.png')} style={imageStyle}/>
+                        <TouchableHighlight onPress ={ this.unstart.bind(this)}>
+                            <Image source={require('../img/logo.png')} style={imageStyle}/>
+                        </TouchableHighlight>
 
 
                         <FormLabel>Логин</FormLabel>
