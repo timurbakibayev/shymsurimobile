@@ -394,9 +394,10 @@ class Instructor extends React.Component {
                             dateTime1 = arr[i].end.split("T");
                         }
                         let time1 = dateTime1[1].split(":");
-                        trainings.push([dateTime[0], time[0] + ":" + time[1] + "-" + time1[0] + ":" + time1[1], arr[i].ski, arr[i].tarif_txt, arr[i].id, arr[i].own_client]);
+                        trainings.push([dateTime[0], time[0] + ":" + time[1] + "-" + time1[0] + ":" + time1[1], arr[i].ski, arr[i].tarif_txt,
+                            arr[i].id, arr[i].own_client, arr[i].is_booked_online]);
                     } else {
-                        trainings.push([dateTime[0], time[0] + ":" + time[1], arr[i].ski, arr[i].tarif_txt, arr[i].id, arr[i].own_client]);
+                        trainings.push([dateTime[0], time[0] + ":" + time[1], arr[i].ski, arr[i].tarif_txt, arr[i].id, arr[i].own_client, arr[i].is_booked_online]);
                     }
                 }
             }
@@ -617,7 +618,7 @@ class Instructor extends React.Component {
             );
         } else {
             return (
-                <Cell
+                <Cell key={training[0]+training[1]}
                     cellContentView={
                         <View
                             style={{alignItems: 'center', flexDirection: 'row', flex: 1, paddingVertical: 10}}>
@@ -651,6 +652,10 @@ class Instructor extends React.Component {
                                 style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
                                 {training[3]}
                             </Text>
+
+
+                            {training[6] && <Icon name="creditcard" size={20}/> }
+
                         </View>
                     }
                 />
