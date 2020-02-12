@@ -39,7 +39,7 @@ import {
 } from 'react-native-tableview-simple';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import call from "react-native-phone-call";
-
+import { Appearance } from 'react-native-appearance';
 
 class Instructor extends React.Component {
 
@@ -294,6 +294,13 @@ class Instructor extends React.Component {
 
 
     renderReportForm() {
+
+        let colorScheme = Appearance.getColorScheme();
+        let bgcolor = '#FFF';
+        if (colorScheme === 'dark') {
+            bgcolor = '#000';
+        };
+
         const {buttonStyle} = styles;
         if (2+2==4 || this.props.instructorShowReportForm) {
             return (
@@ -305,6 +312,7 @@ class Instructor extends React.Component {
                     <DatePicker
                         style={{width: 200, margin: 15}}
                         date={this.props.instructorReportStart}
+                        isDarkModeEnabled={false}
                         mode="date"
                         placeholder="Дата начала"
                         format="YYYY-MM-DD"
@@ -313,6 +321,7 @@ class Instructor extends React.Component {
                         confirmBtnText="Подтвердить"
                         cancelBtnText="Отмена"
                         customStyles={{
+                            datePickerCon: {backgroundColor: bgcolor},
                             dateIcon: {
                                 position: 'absolute',
                                 left: 0,
@@ -337,6 +346,7 @@ class Instructor extends React.Component {
                         confirmBtnText="Подтвердить"
                         cancelBtnText="Отмена"
                         customStyles={{
+                            datePickerCon: {backgroundColor: bgcolor},
                             dateIcon: {
                                 position: 'absolute',
                                 left: 0,
@@ -423,6 +433,11 @@ class Instructor extends React.Component {
     renderAdditionalForm(trainer) {
         const {buttonStyle} = styles;
         const {instructorsCurrentDate, user} = this.props;
+        let colorScheme = Appearance.getColorScheme();
+        let bgcolor = '#FFF';
+        if (colorScheme === 'dark') {
+            bgcolor = '#000';
+        };
         let data = [["1 час", "1,5 часа", "2 часа"]];
         if (2+2==4 || this.props.instructorShowAddEventForm) {
             // this.updateEvents(user, instructorsCurrentDate);
@@ -443,6 +458,7 @@ class Instructor extends React.Component {
                         confirmBtnText="Подтвердить"
                         cancelBtnText="Отмена"
                         customStyles={{
+                            datePickerCon: {backgroundColor: bgcolor},
                             dateIcon: {
                                 position: 'absolute',
                                 left: 0,
@@ -622,7 +638,7 @@ class Instructor extends React.Component {
                     cellContentView={
                         <View
                             style={{alignItems: 'center', flexDirection: 'row', flex: 1, paddingVertical: 10}}>
-
+                            <View style={{flexDirection: 'column'}}>
                             <Text
                                 allowFontScaling
                                 numberOfLines={1}
@@ -636,6 +652,7 @@ class Instructor extends React.Component {
                                 style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
                                 {training[1]}
                             </Text>
+                            </View>
 
                             <Text
                                 allowFontScaling
@@ -654,7 +671,7 @@ class Instructor extends React.Component {
                             </Text>
 
 
-                            {training[6] && <Icon name="creditcard" size={20}/> }
+                            {training[6] && <Icon name="wallet" size={20}/> }
 
                         </View>
                     }

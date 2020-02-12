@@ -6,7 +6,7 @@ import {
     Alert,
     StyleSheet,
     TouchableOpacity,
-    Picker
+    Picker, Image
 } from 'react-native';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import {List, ListItem, Button, SearchBar, CheckBox} from 'react-native-elements';
@@ -43,6 +43,7 @@ import {
     instructorSnowboard
 } from "../actions/users";
 import {logOut} from "../actions";
+import { Appearance } from 'react-native-appearance';
 
 
 import call from 'react-native-phone-call';
@@ -380,12 +381,17 @@ class Instructors extends React.Component {
                     // console.log("this is trainer ", instructors[i]);
                     let instructor = instructors[i];
                     // this.onLearnMore(instructor, events);
-                    const {name, phone, rating} = instructor;
+                    const {name, phone, rating, photo} = instructor;
                     return (
                         <ScrollView>
                             <Header onReturnPressed={this.returnToPreviousScreen.bind(this)}
                                     onLogoutPressed={this.logoutPressed.bind(this)}
                                     headerText={"Shymbulak Ski & Snowboard School"}/>
+                                    <View style={{ alignItems: 'center', margin: 10}}>
+                                    <View style={{width: 120, height: 120, borderRadius: '50%', overflow: 'hidden'}}>
+                                        <Image style={{width: 120, height: 120}} source={{uri: `https://instructor-shym.kz${photo}`}}/>
+                                    </View>
+                                    </View>
                             <TopSlider
                                 currentDate={this.props.instructorsCurrentDate}
                                 onLeftPressed={this.leftPressed.bind(this)}
@@ -416,7 +422,7 @@ class Instructors extends React.Component {
                                 />
                                 <ListItem
                                     title="Рейтинг"
-                                    rightTitle={rating}
+                                    rightTitle={`${rating}`}
                                     hideChevron
                                     rightTitleStyle={{color: '#000'}}
                                 />
@@ -439,6 +445,7 @@ class Instructors extends React.Component {
                             {this.renderReportForm()}
                             {this.renderReports(instructor)}
                             {/*{this.renderReportOnSelectedDate()}*/}
+                            <View style={{ alignItems: 'center', marginBottom: 200}}/>
                         </ScrollView>
                     );
                 }
@@ -527,9 +534,9 @@ class Instructors extends React.Component {
                             dateTime1 = arr[i].end.split("T");
                         }
                         let time1 = dateTime1[1].split(":");
-                        trainings.push([dateTime[0], time[0] + ":" + time[1] + "-" + time1[0] + ":" + time1[1], arr[i].ski, arr[i].tarif_txt, arr[i].id, arr[i].own_client]);
+                        trainings.push([dateTime[0], time[0] + ":" + time[1] + "-" + time1[0] + ":" + time1[1], arr[i].ski, arr[i].tarif_txt, arr[i].id, arr[i].own_client, arr[i].is_booked_online]);
                     } else {
-                        trainings.push([dateTime[0], time[0] + ":" + time[1], arr[i].ski, arr[i].tarif_txt, arr[i].id, arr[i].own_client]);
+                        trainings.push([dateTime[0], time[0] + ":" + time[1], arr[i].ski, arr[i].tarif_txt, arr[i].id, arr[i].own_client, arr[i].is_booked_online]);
                     }
                 }
             }
@@ -579,11 +586,11 @@ class Instructors extends React.Component {
         // console.log("This is own client", training[4]);
         if (training[5]) {
             return (
-                <Cell
+                <Cell key={training[0]+training[1]}
                     cellContentView={
                         <View
                             style={{alignItems: 'center', flexDirection: 'row', flex: 1, paddingVertical: 10}}>
-
+                            <View style={{flexDirection: 'column'}}>
                             <Text
                                 allowFontScaling
                                 numberOfLines={1}
@@ -597,6 +604,7 @@ class Instructors extends React.Component {
                                 style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
                                 {training[1]}
                             </Text>
+                            </View>
 
                             <Text
                                 allowFontScaling
@@ -625,11 +633,11 @@ class Instructors extends React.Component {
             );
         } else {
             return (
-                <Cell
+                <Cell key={training[0]+training[1]}
                     cellContentView={
                         <View
                             style={{alignItems: 'center', flexDirection: 'row', flex: 1, paddingVertical: 10}}>
-
+                            <View style={{flexDirection: 'column'}}>
                             <Text
                                 allowFontScaling
                                 numberOfLines={1}
@@ -643,6 +651,7 @@ class Instructors extends React.Component {
                                 style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
                                 {training[1]}
                             </Text>
+                            </View>
 
                             <Text
                                 allowFontScaling
@@ -658,6 +667,7 @@ class Instructors extends React.Component {
                                 style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
                                 {training[3]}
                             </Text>
+                            {training[6] && <Icon name="wallet" size={20}/> }
                         </View>
                     }
                 />
@@ -711,7 +721,7 @@ class Instructors extends React.Component {
         const {id, name, rating} = instructor;
         if (id === report[0]) {
             return (
-                <CellVariant name={report[1]}
+                <CellVariant key={`${report[1]}-${report[2]}-${report[3]}`} name={report[1]}
                              title2={report[2]}
                              title3={report[3]}
                              title4={report[4]}/>
@@ -763,6 +773,11 @@ class Instructors extends React.Component {
 
     renderReportForm() {
         const {buttonStyle} = styles;
+        let colorScheme = Appearance.getColorScheme();
+        let bgcolor = '#FFF';
+        if (colorScheme === 'dark') {
+            bgcolor = '#000';
+        };
         if (this.props.showAddReport) {
             return (
                 <View styel={{flex: 1}}>
@@ -777,6 +792,7 @@ class Instructors extends React.Component {
                         confirmBtnText="Подтвердить"
                         cancelBtnText="Отмена"
                         customStyles={{
+                            datePickerCon: {backgroundColor: bgcolor},
                             dateIcon: {
                                 position: 'absolute',
                                 left: 0,
@@ -794,13 +810,14 @@ class Instructors extends React.Component {
                         style={{width: 200}}
                         date={this.props.instructorReportEnd}
                         mode="date"
-                        placeholder="Дата начала"
+                        placeholder="Дата конца"
                         format="YYYY-MM-DD"
                         minDate="2016-05-01"
                         // maxDate="2017-12-31"
                         confirmBtnText="Подтвердить"
                         cancelBtnText="Отмена"
                         customStyles={{
+                            datePickerCon: {backgroundColor: bgcolor},
                             dateIcon: {
                                 position: 'absolute',
                                 left: 0,
@@ -941,6 +958,11 @@ class Instructors extends React.Component {
         const {buttonStyle} = styles;
         const {instructorsCurrentDate, user} = this.props;
         let data = [["1 час", "1,5 часа", "2 часа"]];
+        let colorScheme = Appearance.getColorScheme();
+        let bgcolor = '#FFF';
+        if (colorScheme === 'dark') {
+            bgcolor = '#000';
+        };
         if (this.props.showAddEvent) {
             // this.updateEvents(user, instructorsCurrentDate);
             return (
@@ -956,6 +978,7 @@ class Instructors extends React.Component {
                         confirmBtnText="Подтвердить"
                         cancelBtnText="Отмена"
                         customStyles={{
+                            datePickerCon: {backgroundColor: bgcolor},
                             dateIcon: {
                                 position: 'absolute',
                                 left: 0,
@@ -968,29 +991,6 @@ class Instructors extends React.Component {
                         }}
                         onDateChange={this.onInstructorEventDateStart.bind(this)}
                     />
-                    {/*<DatePicker*/}
-                    {/*style={{width: 200}}*/}
-                    {/*date={this.props.instructorEventEnd}*/}
-                    {/*mode="datetime"*/}
-                    {/*placeholder="Дата начала"*/}
-                    {/*format="YYYY-MM-DD HH:mm:ss"*/}
-                    {/*minDate="2016-05-01"*/}
-                    {/*maxDate="2017-12-31"*/}
-                    {/*confirmBtnText="Подтвердить"*/}
-                    {/*cancelBtnText="Отмена"*/}
-                    {/*customStyles={{*/}
-                    {/*dateIcon: {*/}
-                    {/*position: 'absolute',*/}
-                    {/*left: 0,*/}
-                    {/*top: 4,*/}
-                    {/*marginLeft: 0*/}
-                    {/*},*/}
-                    {/*dateInput: {*/}
-                    {/*marginLeft: 36*/}
-                    {/*}*/}
-                    {/*}}*/}
-                    {/*onDateChange={this.onInstructorEventDateEnd.bind(this)}*/}
-                    {/*/>*/}
                     <View style={{flex: 1, marginBottom: 120}}>
 
                         <DropdownMenu style={{flex: 1}}

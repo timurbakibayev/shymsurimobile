@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {View, Text, ScrollView, Dimensions, Image} from 'react-native';
 import {Button} from 'react-native-elements';
 import logo from '../img/logo.png';
+import ski_ani from '../img/animated-skiing-image-0012.gif';
 import logo_shym from '../img/shymbulak_logo.png';
 import instr1 from '../img/Pedus-Sergej-kopiya-400x600.jpg';
 import instr2 from '../img/Ahmetov-Damir-400x600.jpg';
@@ -23,7 +24,7 @@ class Slides extends Component {
 
     tapImage() {
         console.log(this.state.tapsImage, this.state.tapsText );
-        if (this.state.tapsImage + 1 === 5 && this.state.tapsText === 5) {
+        if (this.state.tapsImage + 1 === 5 && this.state.tapsText === 5 || this.state.tapsImage + 1 === 10) {
             this.props.onComplete();
         }
         if (this.state.beforeWasText)
@@ -53,11 +54,17 @@ class Slides extends Component {
                         width:SCREEN_WIDTH/2,
                         resizeMode: "contain",
                         height: SCREEN_WIDTH/2,
-                        marginTop: -SCREEN_HEIGHT/2,
                     }} source={logo} onPress = {this.tapImage.bind(this)}/>
                     </TouchableHighlight>
 
                     <Text style={styles.slideText} onPress = {this.tapText.bind(this)}>Школа горных лыж и сноуборда</Text>
+
+                    <Image style={{
+                        width:SCREEN_WIDTH/2,
+                        resizeMode: "contain",
+                        marginTop: 20,
+                    }} source={ski_ani} onPress = {this.tapImage.bind(this)}/>
+
 
                 </View>
                 <View style={[styles.slide, {backgroundColor: "#009688", padding: 20}]}>

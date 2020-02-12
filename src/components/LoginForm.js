@@ -171,7 +171,7 @@ class LoginForm extends React.Component {
                             {this.renderButton()}
                         </CardSection>
 
-                        <Text>{VERSION}</Text>
+                        <Text style={{margin: 10}}>{VERSION}</Text>
 
                     </View>
                 </KeyboardAvoidingView>
