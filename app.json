@@ -3,13 +3,12 @@
     "name": "Shymbulak Ski School",
     "slug": "surimobileinfo",
     "privacy": "public",
-    "sdkVersion": "35.0.0",
     "platforms": [
       "ios",
       "android",
       "web"
     ],
-    "version": "5",
+    "version": "6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {

@@ -12,7 +12,8 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import Icon from "react-native-vector-icons/FontAwesome";
 import * as Actions from '../actions';
-import Slides from '../components/slides'
+import Slides from '../components/slides';
+import Game from '../screens/Game';
 
 const SLIDES_DATA = [
     {text: "Меню пользователя выдвигается слева", color: '#009688'},
@@ -22,13 +23,16 @@ const SLIDES_DATA = [
 class Home extends Component {
     constructor(props) {
         super(props);
-
-        this.state = {};
+        this.state = {game: false};
 
     }
 
     componentDidMount() {
-    }
+    };
+
+    startGame() {
+      this.setState({...this.state, game: true});
+    };
 
     static navigationOptions = {
         title: 'Welcome',
@@ -37,9 +41,16 @@ class Home extends Component {
     };
 
     render() {
+        if (this.state.game)
+            return (
+                <View style={{flex: 1, backgroundColor: '#F5F5F5', paddingTop: 20}}>
+                    <Game/>
+                </View>
+            );
         return (
             <View style={{flex: 1, backgroundColor: '#F5F5F5', paddingTop: 20}}>
-                <Slides data={SLIDES_DATA} onComplete = {()=>{this.props.start()}}/>
+                <Slides data={SLIDES_DATA} onComplete = {()=>{this.props.start()}}
+                    runGame = {()=>{this.startGame()}}/>
             </View>
         );
     }

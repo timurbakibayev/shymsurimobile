@@ -11,14 +11,13 @@ import {navigateScreen} from "../actions/screen";
 class Main extends React.Component {
 
 
-    componentWillMount() {
+    componentDidMount() {
         AsyncStorage.getItem("token").then((token) => console.log("This is retrieved token ", token));
     }
 
     static async saveItem(item, selectedValue) {
         try {
             await AsyncStorage.setItem(item, selectedValue);
-            // console.log("This is saving item ", item ,selectedValue);
         } catch (error) {
             // console.log("AsyncStorage Error ", error);
         }

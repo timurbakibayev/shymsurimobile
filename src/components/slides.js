@@ -33,6 +33,10 @@ class Slides extends Component {
             this.setState({tapsImage: this.state.tapsImage + 1, tapsText: 0});
     }
 
+    runGame() {
+        this.props.runGame();
+    }
+
     tapText() {
         console.log(this.state.tapsImage, this.state.tapsText );
         if (this.state.tapsImage === 5 && this.state.tapsText + 1 === 5) {
@@ -51,21 +55,24 @@ class Slides extends Component {
                 <View style={[styles.slide, {backgroundColor: "#2196f3"}]}>
                     <TouchableHighlight onPress ={ this.tapImage.bind(this)}>
                     <Image style={{
-                        width:SCREEN_WIDTH/2,
+                        width:SCREEN_WIDTH/2.5,
                         resizeMode: "contain",
-                        height: SCREEN_WIDTH/2,
+                        height: SCREEN_WIDTH/2.5,
                     }} source={logo} onPress = {this.tapImage.bind(this)}/>
                     </TouchableHighlight>
 
                     <Text style={styles.slideText} onPress = {this.tapText.bind(this)}>Школа горных лыж и сноуборда</Text>
+
+                    <Button title={"Начать игру"}
+                            color="#841584"
+                        onPress={this.props.runGame.bind(this)}/>
 
                     <Image style={{
                         width:SCREEN_WIDTH/2,
                         resizeMode: "contain",
                         marginTop: 20,
                     }} source={ski_ani} onPress = {this.tapImage.bind(this)}/>
-
-
+                    
                 </View>
                 <View style={[styles.slide, {backgroundColor: "#009688", padding: 20}]}>
                     <Image style={{
