@@ -47,7 +47,7 @@ class LoginForm extends React.Component {
     // }
 
 
-    async componentWillMount() {
+    async componentDidMount() {
         self = this;
         await AsyncStorage.getItem("admin_area").then((password) => {
             if (password === 'iddqd') {

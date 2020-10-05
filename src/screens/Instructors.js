@@ -76,7 +76,7 @@ class Instructors extends React.Component {
         this.props.navigation.navigate('Details', {...instructor, events});
     };
 
-    componentWillMount() {
+    componentDidMount() {
 
         let today = new Date();
         let dd = today.getDate();

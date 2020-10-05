@@ -9,7 +9,7 @@ import {Table, TableWrapper, Row, Rows, Col, Cols, Cell} from 'react-native-tabl
 
 class Events extends React.Component {
 
-    componentWillMount() {
+    componentDidMount() {
         const {token} = this.props.user;
         this.props.getEvents({token});
     }
