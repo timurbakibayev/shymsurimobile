@@ -388,7 +388,7 @@ class Instructors extends React.Component {
                                     onLogoutPressed={this.logoutPressed.bind(this)}
                                     headerText={"Shymbulak Ski & Snowboard School"}/>
                                     <View style={{ alignItems: 'center', margin: 10}}>
-                                    <View style={{width: 120, height: 120, borderRadius: '50%', overflow: 'hidden'}}>
+                                    <View style={{width: 120, height: 120, borderRadius: 50, overflow: 'hidden'}}>
                                         <Image style={{width: 120, height: 120}} source={{uri: `https://instructor-shym.kz${photo}`}}/>
                                     </View>
                                     </View>

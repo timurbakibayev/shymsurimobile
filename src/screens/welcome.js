@@ -34,6 +34,10 @@ class Home extends Component {
       this.setState({...this.state, game: true});
     };
 
+    stopGame() {
+      this.setState({...this.state, game: false});
+    };
+
     static navigationOptions = {
         title: 'Welcome',
         header: null,
@@ -44,13 +48,14 @@ class Home extends Component {
         if (this.state.game)
             return (
                 <View style={{flex: 1, backgroundColor: '#F5F5F5', paddingTop: 20}}>
-                    <Game/>
+                    <Game stopGame = {()=>{this.stopGame()}}/>
                 </View>
             );
         return (
             <View style={{flex: 1, backgroundColor: '#F5F5F5', paddingTop: 20}}>
                 <Slides data={SLIDES_DATA} onComplete = {()=>{this.props.start()}}
-                    runGame = {()=>{this.startGame()}}/>
+                    runGame = {()=>{this.startGame()}}
+                    />
             </View>
         );
     }

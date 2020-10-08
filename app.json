@@ -8,7 +8,7 @@
       "android",
       "web"
     ],
-    "version": "6",
+    "version": "8",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -25,6 +25,9 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.sagrad.surimobileinfo"
+    },
+    "android": {
+      "package": "com.sagrad.surimobileinfo"
     }
   }
 }

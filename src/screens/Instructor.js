@@ -193,7 +193,7 @@ class Instructor extends React.Component {
                             style={{width: '70%'}}
                     />
                     <View style={{ alignItems: 'center', margin: 10}}>
-                    <View style={{width: 120, height: 120, borderRadius: '50%', overflow: 'hidden'}}>
+                    <View style={{width: 120, height: 120, borderRadius: 50, overflow: 'hidden'}}>
                         <Image style={{width: 120, height: 120}} source={{uri: `https://instructor-shym.kz${photo}`}}
                         /></View></View>
                     <TopSlider
@@ -304,7 +304,7 @@ class Instructor extends React.Component {
         const {buttonStyle} = styles;
         if (2+2==4 || this.props.instructorShowReportForm) {
             return (
-                <View style={{flex: 1, margin: 10, borderStyle: 'solid', borderRadius: '30%', borderColor: 'Black',
+                <View style={{flex: 1, margin: 10, borderStyle: 'solid', borderRadius: 30, borderColor: 'Black',
                                 borderWidth: 2, padding: 10, alignItems: 'center'}}>
                     <Text align='center' style={{width: '100%', textAlign: 'center', alignItems: 'center'}}>
                         Новый отчет:
@@ -442,7 +442,7 @@ class Instructor extends React.Component {
         if (2+2==4 || this.props.instructorShowAddEventForm) {
             // this.updateEvents(user, instructorsCurrentDate);
             return (
-                <View style={{flex: 1, margin: 10, borderStyle: 'solid', borderRadius: '30%', borderColor: 'Black',
+                <View style={{flex: 1, margin: 10, borderStyle: 'solid', borderRadius: 30, borderColor: 'Black',
                                 borderWidth: 2, padding: 10, alignItems: 'center'}}>
                     <Text style={{textAlign: 'center', alignItems: 'center'}}>
                         Новое занятие:

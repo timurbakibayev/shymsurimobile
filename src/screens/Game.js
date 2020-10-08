@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { AppRegistry, StyleSheet, Dimensions, View, ImageBackground, Text } from "react-native";
+import { AppState, AsyncStorage, AppRegistry, StyleSheet, Dimensions, View, ImageBackground, Text } from "react-native";
 import { GameLoop } from "react-native-game-engine";
 const { width: WIDTH, height: HEIGHT } = Dimensions.get("window");
 const RADIUS = 50;
@@ -12,6 +12,10 @@ let speed = 2;
 let nextLevel = 0;
 let dx = 0;
 let km = 0;
+let fail = false;
+let counter = 0;
+let active = true;
+let highScore = -1;
 
 class Snow {
     constructor(x,y,w) {
@@ -38,7 +42,58 @@ export default class BestGameEver extends PureComponent {
     };
   }
 
+  _storeData = async () => {
+      try {
+            await AsyncStorage.setItem(
+              'highscore',
+              highScore.toString()
+            );
+      } catch (error) {
+          console.log("error saving data")
+      }
+    };
+
+  _retrieveData = async () => {
+      console.log("retrieving");
+      try {
+        const value = await AsyncStorage.getItem('highscore');
+        if (value !== null) {
+          // We have data!!
+          highScore = parseInt(value);
+        } else {
+            highScore = 0;
+        }
+      } catch (error) {
+        console.log("there was no highscore")
+        highScore = 0;
+      }
+    };
+
   updateHandler = ({ touches, screen, layout, time }) => {
+    counter++;
+    if (counter>30) {
+        counter = 0;
+
+        if (highScore === -1) {
+            this._retrieveData();
+        }
+        if (highScore>=0 && highScore<km) {
+            highScore = km;
+            this._storeData();
+            console.log("new highscore");
+            console.log(highScore);
+        }
+
+        if (AppState.currentState !== "active") {
+            active = false;
+            this.props.stopGame();
+        } else {
+            active = true;
+        }
+    }
+    if (!active)
+        return;
+
     nextLevel = nextLevel + time.delta*speed;
     km = km + time.delta;
     if (nextLevel>20000) {
@@ -46,13 +101,19 @@ export default class BestGameEver extends PureComponent {
         speed = speed + 1;
         if (speed > 7)
             speed = 7;
+
     }
     let c = time.delta /15;
     let move = touches.find(x => x.type === "move");
+    let press = touches.find(x => x.type === "press");
     let newX = this.state.realX;
     let newY = this.state.y;
     if (move) {
         rotating = move.delta.pageX;
+    }
+    if (press) {
+        if (press.event.pageY < 100)
+            this.props.stopGame();
     }
 
     let newLooking = this.state.looking + rotating;
@@ -61,7 +122,7 @@ export default class BestGameEver extends PureComponent {
     if (newLooking < -100)
         newLooking = -100;
 
-    dx = dx + newLooking/200*c;
+    dx = dx + newLooking/300*c;
     if (dx<-3)
         dx = -3;
     if (dx>3)
@@ -82,11 +143,37 @@ export default class BestGameEver extends PureComponent {
             more = false;
     });
     snowRoad = snowRoad.filter((snow)=>snow.y>-snow.w);
-    trees.forEach((snow)=>{
-        snow.y = snow.y - speed*c;
-        if (snow.y > HEIGHT-snow.w/2)
+    let checkX = 0;
+    let checkY = newY;
+    let checkW = 0;
+
+    if (newLooking>=0) {
+        checkX = Math.round(newX-RADIUS*newLooking/100/2);
+        checkW = Math.round(this.state.width*this.state.looking/100);
+    } else {
+        checkX = Math.round(newX - RADIUS*(-newLooking)/100 -
+                    RADIUS*newLooking/100/2);
+        checkW = Math.round(-this.state.width*this.state.looking/100)
+    }
+    if (checkW <= 1)
+      checkW = 1;
+    checkX = checkX + checkW/2;
+
+    fail = false;
+    trees.forEach((tree)=>{
+        tree.y = tree.y - speed*c;
+        if (tree.y > HEIGHT-tree.w/2)
             more = false;
+        if ((tree.x < checkX) && (checkX < tree.x + tree.w) &&
+            (tree.y < checkY) && (checkY < tree.y + tree.w) )
+            fail = true;
     });
+    if (fail) {
+        km = km - time.delta*10;
+        if (km<0)
+            km = 0;
+        speed = 1;
+    }
     trees = trees.filter((snow)=>snow.y>-snow.w);
     if (more) {
         if (Math.abs(roadX - roadZielX) <= roadW*2)
@@ -118,6 +205,12 @@ export default class BestGameEver extends PureComponent {
   };
 
   render() {
+      let new_style = {};
+      Object.assign(new_style, styles.player);
+      if (fail) {
+          new_style.backgroundColor = "#aa222299";
+          new_style.borderRadius = 50;
+      }
     return (
       <GameLoop style={styles.container} onUpdate={this.updateHandler}>
 
@@ -143,7 +236,7 @@ export default class BestGameEver extends PureComponent {
             </View>)}
 
 
-            {this.state.looking>=0 && <View style={[styles.player, {
+            {this.state.looking>=0 && <View style={[new_style, {
               left: Math.round(this.state.x-this.state.width*this.state.looking/100/2),
               top: this.state.y, width: Math.round(this.state.width*this.state.looking/100), height: this.state.height}]}>
             <ImageBackground source={require("../game/skier-google_right.png")} style={styles.image}
@@ -151,7 +244,7 @@ export default class BestGameEver extends PureComponent {
             </ImageBackground>
             </View>}
           {this.state.looking<0 &&
-            <View style={[styles.player, {
+            <View style={[new_style, {
                 left: Math.round(this.state.x - RADIUS*(-this.state.looking)/100 -
                     this.state.width*this.state.looking/100/2),
                 top: this.state.y,
@@ -162,8 +255,22 @@ export default class BestGameEver extends PureComponent {
             </ImageBackground>
             </View>}
 
-            <Text style={{width: WIDTH,  textAlign: "center", fontSize: 40, color: "green"}}
-            >{Math.floor(km/400)}</Text>
+            <View style={{display: "flex", width: WIDTH, flexDirection: "row"}}>
+                <Text style={{flex: 0.5,  textAlign: "center", fontSize: 40, color: "green"}}
+                >{Math.floor(km/400)}</Text>
+                {highScore>0 && <Text style={{flex: 0.5,  textAlign: "center", fontSize: 40, color: "green"}}
+                >{Math.floor(highScore/400)}</Text>}
+                {highScore<=0 && <Text style={{flex: 0.5,  textAlign: "center", fontSize: 40, color: "green"}}
+                >...</Text>}
+            </View>
+
+            <View style={{position: "absolute", top: 0, left: Math.round(WIDTH/2-25), width: 50,
+                height: 50}}>
+                <ImageBackground source={require("../game/close.png")} style={styles.image}
+                    resizeMode="stretch">
+                </ImageBackground>
+            </View>
+
 
       </GameLoop>
     );
