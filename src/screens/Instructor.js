@@ -238,7 +238,6 @@ class Instructor extends React.Component {
 
                     {this.renderAdditionalForm(trainer)}
 
-
                     {this.renderReports(trainer)}
                     {this.renderReportForm()}
 
@@ -253,27 +252,29 @@ class Instructor extends React.Component {
     }
 
     renderReports(instructor) {
-        const {reports} = this.props;
-        if (reports.length > 0) {
-            return (
+        console.log("Loading:",this.props.instructorReportsLoading);
+        // const {reports} = this.props;
+        if (this.props.instructorReportsLoading)
+            return (<Text style={styles.noDataText}>Загружается...</Text>);
+        return (<View>
+            {this.props.reports.length > 0 &&
                 <TableView>
                     <Section>
                         <CellVariant name="Забронировано" title2="Подтверждено" title3="Часы" title4="Начисленно"/>
-                        {reports.map((report) => (
+                        {this.props.reports.map((report) => (
                             this.instructorReport(report, instructor)
                         ))}
                     </Section>
-                </TableView>
-            );
-        } else {
-            return (<View/>)
-        }
+                </TableView>}
+            {this.props.reports.length === 0 && <Text style={styles.noDataText}>Отчет не найден</Text>}
+        </View>)
     }
 
     instructorReport(report, instructor) {
-        // console.log("This is rep element", report);
+        console.log("This is rep element", report);
+        console.log("This is rep element", instructor);
         const {id, name, rating} = instructor;
-        if (id === report[0]) {
+        if ((id === report[0]) || (report[0] === 0 && report[1] === 0 && report[2] === 0)) {
             return (
                 <CellVariant key={id}
                                  name={report[1]}
@@ -304,7 +305,7 @@ class Instructor extends React.Component {
         const {buttonStyle} = styles;
         if (2+2==4 || this.props.instructorShowReportForm) {
             return (
-                <View style={{flex: 1, margin: 10, borderStyle: 'solid', borderRadius: 30, borderColor: 'Black',
+                <View style={{flex: 1, margin: 10, borderStyle: 'solid', borderRadius: 10, borderColor: '#CCCCCC',
                                 borderWidth: 2, padding: 10, alignItems: 'center'}}>
                     <Text align='center' style={{width: '100%', textAlign: 'center', alignItems: 'center'}}>
                         Новый отчет:
@@ -384,7 +385,7 @@ class Instructor extends React.Component {
     renderEvents(trainer) {
         const {user, instructorCurrentDate, instructorEventSuccess} = this.props;
         // console.log("This is events", instructorEventSuccess);
-        if (instructorEventSuccess.length > 0) {
+        if (2+2==4 || instructorEventSuccess.length > 0) {
             const indexes = [];
             const trainings = [];
             let count = 0;
@@ -412,6 +413,8 @@ class Instructor extends React.Component {
                 }
             }
 
+            console.log(trainings);
+
             if (trainings.length > 0) {
                 return (
                     <TableView>
@@ -425,8 +428,9 @@ class Instructor extends React.Component {
                 );
             }
             else {
-                return (<Text style={styles.noDataText}>Нет данных</Text>)
+                return (<Text style={styles.noDataText}>Сегодня нет занятий</Text>)
             }
+
         }
     }
 
@@ -442,7 +446,7 @@ class Instructor extends React.Component {
         if (2+2==4 || this.props.instructorShowAddEventForm) {
             // this.updateEvents(user, instructorsCurrentDate);
             return (
-                <View style={{flex: 1, margin: 10, borderStyle: 'solid', borderRadius: 30, borderColor: 'Black',
+                <View style={{flex: 1, margin: 10, borderStyle: 'solid', borderRadius: 10, borderColor: '#CCCCCC',
                                 borderWidth: 2, padding: 10, alignItems: 'center'}}>
                     <Text style={{textAlign: 'center', alignItems: 'center'}}>
                         Новое занятие:
@@ -493,7 +497,7 @@ class Instructor extends React.Component {
                         </View>
 
                         <DropdownMenu
-
+                                      useNativeDriver={true}
                                       bgColor={"#BBBBBB"}
                                       color={'black'}
                                       tintColor={"white"}
@@ -731,28 +735,28 @@ const CellVariant = (props) => (
 
                 <Text
                     allowFontScaling
-                    numberOfLines={1}
+                    numberOfLines={2}
                     style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
                     {props.name}
                 </Text>
 
                 <Text
                     allowFontScaling
-                    numberOfLines={1}
+                    numberOfLines={2}
                     style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
                     {props.title2}
                 </Text>
 
                 <Text
                     allowFontScaling
-                    numberOfLines={1}
+                    numberOfLines={2}
                     style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
                     {props.title3}
                 </Text>
 
                 <Text
                     allowFontScaling
-                    numberOfLines={1}
+                    numberOfLines={2}
                     style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
                     {props.title4}
                 </Text>
@@ -792,6 +796,8 @@ const mapStateToProps = ({auth, instructorReducer}) => {
         instructorEventSuccess,
         reload,
         instructorShowReportForm,
+        instructorReportsLoading,
+        instructorEventsLoading,
         instructorReportStart,
         instructorReportEnd,
         reports,
@@ -812,6 +818,8 @@ const mapStateToProps = ({auth, instructorReducer}) => {
         instructorLoadedTrainers,
         instructorShowAddEventForm,
         instructorEventSuccess,
+        instructorReportsLoading,
+        instructorEventsLoading,
         reload,
         instructorShowReportForm,
         instructorReportStart,

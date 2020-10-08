@@ -1,4 +1,11 @@
-import {REPORT_END_DATE, REPORT_START_DATE, REPORT_SUCCESS, REPORT_TRAINERS_SUCCESS, URL} from "./types";
+import {
+    REPORT_END_DATE,
+    REPORT_LOADING,
+    REPORT_START_DATE,
+    REPORT_SUCCESS,
+    REPORT_TRAINERS_SUCCESS,
+    URL
+} from "./types";
 // import {URL} from "../const";
 
 export const getReportOnSelectedDate = (user, startDate, endDate) => {
@@ -18,6 +25,10 @@ export const getReportOnSelectedDate = (user, startDate, endDate) => {
 
 export const getReportTrainers = (user) => {
     console.log("This is user token", user.token);
+    dispatch({
+        type: REPORT_LOADING,
+        payload: true,
+    });
     return (dispatch) => {
         fetch(`${URL}trainers/`, {
             method: 'GET',
@@ -28,12 +39,20 @@ export const getReportTrainers = (user) => {
             }
         }).then((response) => response.json())
             .then((reportInstructors) => getReportTrainersSuccess(dispatch, reportInstructors))
-            .catch((error) => console.log(error));
+            .catch((error) => {console.log(error);
+                                dispatch({
+                                    type: REPORT_LOADING,
+                                    payload: false,
+                                }); });
     }
 };
 
 
 const getReportTrainersSuccess = (dispatch, reportInstructors) => {
+    dispatch({
+        type: REPORT_LOADING,
+        payload: false,
+    });
     dispatch({
         type: REPORT_TRAINERS_SUCCESS,
         payload: reportInstructors

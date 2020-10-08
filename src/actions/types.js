@@ -61,6 +61,7 @@ export const TAKEN_CHOSEN_TRAINER_DATE_END = 'trainer_end_date';
 
 
 export const REPORT_SUCCESS = 'report_success';
+export const REPORT_LOADING = 'report_loading';
 export const REPORT_FAIL = 'report_fail';
 export const REPORT_START_DATE = 'report_start_date';
 export const REPORT_END_DATE = 'report_end_date';
@@ -88,6 +89,7 @@ export const TRAINER_AT_WORK = 'trainer_at_work';
 
 export const INSTRUCTOR_DATA_LOADING = 'instructor_data_loading';
 export const INSTRUCTOR_TRAINERS_LOADED = 'instructor_trainers_loaded';
+export const INSTRUCTOR_REPORT_LOADING = 'instructor_report_loading';
 export const INSTRUCTOR_TRAINERS_LOADED_ERROR = 'instructor_trainers_loaded_error';
 
 

@@ -4,6 +4,7 @@ import {
     INSTRUCTOR_DETAIL_HIDE_EVENT,
     INSTRUCTOR_EVENT_FAIL,
     INSTRUCTOR_EVENT_LOADING,
+    INSTRUCTOR_REPORT_LOADING,
     INSTRUCTOR_EVENT_SUCCESS, INSTRUCTOR_LEFT_DATE, INSTRUCTOR_RELOAD, INSTRUCTOR_REPORT_END, INSTRUCTOR_REPORT_START,
     INSTRUCTOR_REPORT_SUCCESS, INSTRUCTOR_RIGHT_DATE, INSTRUCTOR_SHOW_REPORT, INSTRUCTOR_SKI, INSTRUCTOR_SNOWBOARD,
     INSTRUCTOR_TRAINERS_LOADED,
@@ -217,15 +218,19 @@ export const instructorAddReportEnd = (date) => {
 };
 
 const getTrainerSuccess = (dispatch, instructors) => {
-
     dispatch({
         type: INSTRUCTOR_TRAINERS_LOADED,
-        payload: instructors
+        payload: instructors,
     })
 };
 
 export const getReportOnSelectedDate = (user, instructorReportStart, instructorReportEnd) => {
     return (dispatch) => {
+        dispatch({
+            type: INSTRUCTOR_REPORT_LOADING,
+            payload: true,
+        });
+        console.log("fetching report...");
         fetch(`${URL}events/grouped/?date=${instructorReportStart}&date_to=${instructorReportEnd}`, {
             method: 'GET',
             headers: {
@@ -234,7 +239,6 @@ export const getReportOnSelectedDate = (user, instructorReportStart, instructorR
                 'Authorization': `JWT ${ user.token }`
             }
         }).then((response) => response.json())
-        // .then((responseJson) => console.log("This is response json ", responseJson))
             .then((responseJson) => onInstructorReportSuccess(dispatch, responseJson))
             .catch((error) => console.log(error));
     }
@@ -243,6 +247,7 @@ export const getReportOnSelectedDate = (user, instructorReportStart, instructorR
 const onInstructorReportSuccess = (dispatch, responseJson) => {
     let result = [];
     let resultIndexes = [];
+    console.log("onInstrRepSuc");
     for (let i in responseJson) {
         result.push([
             responseJson[i].resource,
@@ -252,7 +257,9 @@ const onInstructorReportSuccess = (dispatch, responseJson) => {
             responseJson[i].amount_instructor]);
         resultIndexes.push(i + 1);
     }
-    // console.log("This is all reports", result);
+    console.log("This is all reports", result);
+    if (result.length === 0)
+        result.push([0,0,0,0,0])
     dispatch({
         type: INSTRUCTOR_REPORT_SUCCESS,
         payload: result
