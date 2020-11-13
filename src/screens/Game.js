@@ -24,6 +24,7 @@ class Snow {
         this.w = w;
         id++;
         this.id = id;
+        this.rnd = Math.floor(Math.random() * 100);
     }
 }
 
@@ -39,6 +40,7 @@ export default class BestGameEver extends PureComponent {
         looking: -100,
         snowRoad: [],
         trees: [],
+        goraY: 0,
     };
   }
 
@@ -108,8 +110,11 @@ export default class BestGameEver extends PureComponent {
     let press = touches.find(x => x.type === "press");
     let newX = this.state.realX;
     let newY = this.state.y;
+    let goraY = this.state.goraY;
     if (move) {
         rotating = move.delta.pageX;
+    } else {
+        rotating = 0;
     }
     if (press) {
         if (press.event.pageY < 100)
@@ -142,6 +147,7 @@ export default class BestGameEver extends PureComponent {
         if (snow.y > HEIGHT-snow.w/2)
             more = false;
     });
+    goraY = goraY - speed*c;
     snowRoad = snowRoad.filter((snow)=>snow.y>-snow.w);
     let checkX = 0;
     let checkY = newY;
@@ -200,6 +206,7 @@ export default class BestGameEver extends PureComponent {
         looking: newLooking,
         snowRoad: snowRoad,
         trees: trees,
+        goraY: goraY,
       });
 
   };
@@ -214,6 +221,17 @@ export default class BestGameEver extends PureComponent {
     return (
       <GameLoop style={styles.container} onUpdate={this.updateHandler}>
 
+          {this.state.goraY > - Math.floor(WIDTH/4*6) && <View key={300010} style={[styles.player, {
+                left: 0,
+                top: this.state.goraY,
+                width: WIDTH,
+                height: Math.floor(WIDTH/4*6)}]}>
+            <ImageBackground key={300011} source={
+                require("../game/shymbulak1.png")
+            } style={styles.image}
+                    resizeMode="stretch">
+            </ImageBackground>
+            </View>}
 
           {this.state.snowRoad.map((snow)=><View key={snow.id} style={[styles.player, {
                 left: snow.x,
@@ -230,7 +248,10 @@ export default class BestGameEver extends PureComponent {
                 top: tree.y,
                 width: tree.w,
                 height: tree.w}]}>
-            <ImageBackground key={tree.id+10000} source={require("../game/tannenbaum.png")} style={styles.image}
+            <ImageBackground key={tree.id+10000} source={
+                tree.rnd>50?
+                require("../game/tannenbaum.png"):require("../game/tannenbaum2.png")
+            } style={styles.image}
                     resizeMode="stretch">
             </ImageBackground>
             </View>)}
@@ -238,7 +259,10 @@ export default class BestGameEver extends PureComponent {
 
             {this.state.looking>=0 && <View style={[new_style, {
               left: Math.round(this.state.x-this.state.width*this.state.looking/100/2),
-              top: this.state.y, width: Math.round(this.state.width*this.state.looking/100), height: this.state.height}]}>
+              top: this.state.y + (this.state.goraY < - Math.floor(WIDTH)?
+                        0:
+                        Math.floor(WIDTH)+this.state.goraY
+                ), width: Math.round(this.state.width*this.state.looking/100), height: this.state.height}]}>
             <ImageBackground source={require("../game/skier-google_right.png")} style={styles.image}
                     resizeMode="stretch">
             </ImageBackground>
@@ -247,7 +271,10 @@ export default class BestGameEver extends PureComponent {
             <View style={[new_style, {
                 left: Math.round(this.state.x - RADIUS*(-this.state.looking)/100 -
                     this.state.width*this.state.looking/100/2),
-                top: this.state.y,
+                top: this.state.y + (this.state.goraY < - Math.floor(WIDTH)?
+                        0:
+                        Math.floor(WIDTH)+this.state.goraY
+                ),
                 width: Math.round(-this.state.width*this.state.looking/100),
                 height: this.state.height}]}>
             <ImageBackground source={require("../game/skier-google_left.png")} style={styles.image}

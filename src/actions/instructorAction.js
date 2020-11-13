@@ -269,7 +269,15 @@ const onInstructorReportSuccess = (dispatch, responseJson) => {
 export const instructorAddEventStart = (date) => {
     return {
         type: INSTRUCTOR_DETAIL_EVENT_START,
+        datetime: "date",
         payload: date
+    }
+};
+export const instructorAddEventStartTime = (time) => {
+    return {
+        type: INSTRUCTOR_DETAIL_EVENT_START,
+        datetime: "time",
+        payload: time
     }
 };
 export const instructorAddEventEnd = (time) => {
@@ -280,10 +288,10 @@ export const instructorAddEventEnd = (time) => {
 };
 
 
-export const instructorAddEventToServer = ({user, id, name, rating, instructorEventStart, instructorEventEnd, instructorSkillSki, instructorSkillSnowboard}) => {
+export const instructorAddEventToServer = ({user, id, name, rating, instructorEventStartDate, instructorEventStartTime, instructorEventEnd, instructorSkillSki, instructorSkillSnowboard}) => {
     // console.log("This is token", user.token + " " + id);
     return (dispatch) => {
-        console.log("This is event ", user.token, id, name, rating, instructorEventStart, instructorEventEnd, instructorSkillSki, instructorSkillSnowboard);
+        console.log("This is event ", user.token, id, name, rating, instructorEventStartDate,instructorEventStartTime, instructorEventEnd, instructorSkillSki, instructorSkillSnowboard);
         fetch(`${URL}events/`, {
             method: 'POST',
             headers: {
@@ -293,7 +301,7 @@ export const instructorAddEventToServer = ({user, id, name, rating, instructorEv
             },
             body:
                 JSON.stringify({
-                    start: instructorEventStart,
+                    start: `${instructorEventStartDate} ${instructorEventStartTime}`,
                     duration: instructorEventEnd,
                     text: '',
                     approved: false,

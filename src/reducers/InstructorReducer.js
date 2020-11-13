@@ -40,7 +40,8 @@ const INITIAL_STATE = {
     instructorReportStart: '',
     instructorReportEnd: '',
     reports: [],
-    instructorEventStart: '',
+    instructorEventStartDate: '',
+    instructorEventStartTime: '',
     instructorEventEnd: '',
     trainerAtWork: false,
     leftDate: '',
@@ -113,7 +114,10 @@ export default (state = INITIAL_STATE, action) => {
                 instructorReportsLoading: false,
             };
         case INSTRUCTOR_DETAIL_EVENT_START:
-            return {...state, instructorEventStart: action.payload, instructorDataLoading: false};
+            if (action.datetime == "date")
+                return {...state, instructorEventStartDate: action.payload, instructorDataLoading: false};
+            else
+                return {...state, instructorEventStartTime: action.payload, instructorDataLoading: false};
         case INSTRUCTOR_DETAIL_EVENT_END:
             return {...state, instructorEventEnd: action.payload, instructorDataLoading: false};
         case INSTRUCTOR_DETAIL_HIDE_EVENT:

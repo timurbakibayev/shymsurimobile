@@ -8,7 +8,7 @@
       "android",
       "web"
     ],
-    "version": "8",
+    "version": "10",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -27,7 +27,8 @@
       "bundleIdentifier": "com.sagrad.surimobileinfo"
     },
     "android": {
-      "package": "com.sagrad.surimobileinfo"
+      "package": "com.sagrad.surimobileinfo",
+      "versionCode": 10
     }
   }
 }
