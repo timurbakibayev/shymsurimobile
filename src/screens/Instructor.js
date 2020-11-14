@@ -41,6 +41,7 @@ import {
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import call from "react-native-phone-call";
 import { Appearance } from 'react-native-appearance';
+import {TextInput} from "react-native";
 
 class Instructor extends React.Component {
     constructor(props) {
@@ -458,6 +459,7 @@ class Instructor extends React.Component {
                     <Text style={{textAlign: 'center', alignItems: 'center'}}>
                         Новое занятие:
                     </Text>
+                    <View style={{display: "flex", flexDirection: "row"}}>
                     <DatePicker
                         style={{width: 200, margin: 15}}
                         date={this.props.instructorEventStartDate}
@@ -482,29 +484,18 @@ class Instructor extends React.Component {
                         }}
                         onDateChange={this.onInstructorEventDateStart.bind(this)}
                     />
-                    <DatePicker
-                        style={{width: 200, margin: 15}}
-                        date={this.props.instructorEventStartTime}
-                        mode="time"
-                        placeholder="Время начала"
-                        format="HH:mm"
-                        // maxDate="2017-12-31"
-                        confirmBtnText="Подтвердить"
-                        cancelBtnText="Отмена"
-                        customStyles={{
-                            datePickerCon: {backgroundColor: bgcolor},
-                            dateIcon: {
-                                position: 'absolute',
-                                left: 0,
-                                top: 4,
-                                marginLeft: 0
-                            },
-                            dateInput: {
-                                marginLeft: 36
-                            }
-                        }}
-                        onDateChange={this.onInstructorEventDateStartTime.bind(this)}
+                    <View style={{display: "flex", flexDirection: "row", alignItems: "center",
+                        paddingRight: 10,
+                    }}>
+                    <TextInput
+                        style={{height: 40, width: 80,paddingLeft: 10,  fontSize: 20, border: "#AAAAAA", borderStyle: "solid", borderWidth: 1}}
+                        placeholder="Время начала занятия"
+                        onChangeText={(text) => {
+                            this.onInstructorEventDateStartTime(text)}}
+                        defaultValue={"14:00"}
                     />
+                    </View>
+                    </View>
                     <View style={{flex: 1, flexDirection: 'column'}}>
 
                         <View style={{flexDirection: 'row'}}>
