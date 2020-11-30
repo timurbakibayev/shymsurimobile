@@ -74,6 +74,10 @@ class Instructor extends React.Component {
         this.props.getEventOnSelectedDate(user, currentDay);
         this.props.getTrainerAtWorkFromServer(user);
         // console.log("This is user", user, );
+        this.props.instructorAddEventEnd(1);
+        this.setState({duration:1});
+        this.props.instructorAddReportStart(currentDay);
+        this.props.instructorAddReportEnd(currentDay);
     }
 
     getSpecialization(instructor) {
@@ -102,6 +106,16 @@ class Instructor extends React.Component {
         }
     }
 
+    getSpecializationText(instructor) {
+        const {board, ski} = instructor;
+        if (board && ski)
+            return "Лыжи и Сноуборд";
+        if (ski)
+            return "Лыжи";
+        if (board)
+            return "Сноуборд";
+    }
+
     makeCall = (phone) => {
         const args = {
             number: phone,
@@ -125,6 +139,9 @@ class Instructor extends React.Component {
         this.props.setLeftDate(leftDate);
         this.props.setRightDate(leftDate);
         this.props.getTrainerAtWorkFromServer(user);
+        this.props.instructorAddEventStart(leftDate);
+        this.props.instructorAddReportStart(leftDate);
+        this.props.instructorAddReportEnd(leftDate);
     }
 
     rightPressed() {
@@ -134,7 +151,9 @@ class Instructor extends React.Component {
         this.props.setLeftDate(rightDate);
         this.props.setRightDate(rightDate);
         this.props.getTrainerAtWorkFromServer(user);
-
+        this.props.instructorAddEventStart(rightDate);
+        this.props.instructorAddReportStart(rightDate);
+        this.props.instructorAddReportEnd(rightDate);
     }
 
     onDateChanged(currentDay) {
@@ -142,6 +161,10 @@ class Instructor extends React.Component {
         const {user} = this.props;
         this.props.getEventOnSelectedDate(user, currentDay);
         this.props.getTrainerAtWorkFromServer(user);
+        this.props.instructorAddEventStart(currentDay);
+        this.props.instructorAddReportStart(currentDay);
+        this.props.instructorAddReportEnd(currentDay);
+        console.log("This is the date", currentDay);
     }
 
     updateEvents() {
@@ -149,6 +172,7 @@ class Instructor extends React.Component {
         //console.log("This is the date", instructorCurrentDate);
         if (instructorCurrentDate) {
             this.props.getEventOnSelectedDate(user, instructorCurrentDate);
+
         }
     }
 
@@ -202,8 +226,8 @@ class Instructor extends React.Component {
                             style={{width: '70%'}}
                     />
                     <View style={{ alignItems: 'center', margin: 10}}>
-                    <View style={{width: 120, height: 120, borderRadius: 50, overflow: 'hidden'}}>
-                        <Image style={{width: 120, height: 120}} source={{uri: `https://instructor-shym.kz${photo}`}}
+                    <View style={{width: 60, height: 60, borderRadius: 50, overflow: 'hidden'}}>
+                        <Image style={{width: 60, height: 60}} source={{uri: `https://instructor-shym.kz${photo}`}}
                         /></View></View>
                     <TopSlider
                         currentDate={this.props.instructorCurrentDate}
@@ -222,25 +246,16 @@ class Instructor extends React.Component {
                     {/*{this.renderQueue(trainer.queue)}*/}
                     <List>
                         <ListItem
-                            title="Имя"
-                            rightTitle={name}
-                            hideChevron
-                            rightTitleStyle={{color: '#000', fontSize: 16}}
-                        />
-                        <ListItem
-                            title="Телефон"
-                            rightTitle={phone}
+                            title={`${phone}`}
                             onPress={() => this.makeCall(phone)}
-                            rightTitleStyle={{color: '#6666FF', fontSize: 16}}
-                            hideChevron
-                        />
-                        <ListItem
-                            title="Рейтинг"
-                            rightTitle={`${rating}`}
                             hideChevron
                             rightTitleStyle={{color: '#000', fontSize: 16}}
                         />
-                        {this.getSpecialization(trainer)}
+                        <ListItem
+                            title={`Рейтинг: ${rating},  ` + this.getSpecializationText(trainer)}
+                            hideChevron
+                            rightTitleStyle={{color: '#000', fontSize: 16}}
+                        />
                     </List>
 
                     {this.renderEvents(trainer)}
@@ -424,6 +439,7 @@ class Instructor extends React.Component {
 
             console.log(trainings);
 
+
             if (trainings.length > 0) {
                 return (
                     <TableView>
@@ -437,7 +453,11 @@ class Instructor extends React.Component {
                 );
             }
             else {
-                return (<Text style={styles.noDataText}>Сегодня нет занятий</Text>)
+                if (this.props.instructorEventsLoading){
+                    return (<Text style={styles.noDataText}>Загрузка...</Text>)
+                } else {
+                    return (<Text style={styles.noDataText}>В этот день нет занятий</Text>)
+                }
             }
 
         }
@@ -459,31 +479,6 @@ class Instructor extends React.Component {
                     <Text style={{textAlign: 'center', alignItems: 'center'}}>
                         Новое занятие:
                     </Text>
-                    <View style={{display: "flex", flexDirection: "row"}}>
-                    <DatePicker
-                        style={{width: 200, margin: 15}}
-                        date={this.props.instructorEventStartDate}
-                        mode="date"
-                        placeholder="Дата начала"
-                        format="YYYY-MM-DD"
-                        minDate="2016-05-01"
-                        // maxDate="2017-12-31"
-                        confirmBtnText="Подтвердить"
-                        cancelBtnText="Отмена"
-                        customStyles={{
-                            datePickerCon: {backgroundColor: bgcolor},
-                            dateIcon: {
-                                position: 'absolute',
-                                left: 0,
-                                top: 4,
-                                marginLeft: 0
-                            },
-                            dateInput: {
-                                marginLeft: 36
-                            }
-                        }}
-                        onDateChange={this.onInstructorEventDateStart.bind(this)}
-                    />
                     <View style={{display: "flex", flexDirection: "row", alignItems: "center",
                         paddingRight: 10,
                     }}>
@@ -494,7 +489,6 @@ class Instructor extends React.Component {
                             this.onInstructorEventDateStartTime(text)}}
                         defaultValue={"14:00"}
                     />
-                    </View>
                     </View>
                     <View style={{flex: 1, flexDirection: 'column'}}>
 
@@ -635,21 +629,12 @@ class Instructor extends React.Component {
                         <View
                             style={{alignItems: 'center', flexDirection: 'row', flex: 1, paddingVertical: 10}}>
 
-                            <View style={{flexDirection: 'column'}}>
-                            <Text
-                                allowFontScaling
-                                numberOfLines={1}
-                                style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
-                                {training[0]}
-                            </Text>
-
                             <Text
                                 allowFontScaling
                                 numberOfLines={1}
                                 style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
                                 {training[1]}
                             </Text>
-                            </View>
 
                             <Text
                                 allowFontScaling
@@ -657,15 +642,7 @@ class Instructor extends React.Component {
                                 style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
                                 {
                                     this.renderEquipment(training[2])
-                                }
-                            </Text>
-                            <Text
-                                allowFontScaling
-                                numberOfLines={1}
-                                style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
-                                {
-                                    training[3]
-                                }
+                                }, {training[3]}
                             </Text>
 
                             <TouchableOpacity onPress={this.deleteEvent.bind(this, training[4])}>
@@ -681,13 +658,6 @@ class Instructor extends React.Component {
                     cellContentView={
                         <View
                             style={{alignItems: 'center', flexDirection: 'row', flex: 1, paddingVertical: 10}}>
-                            <View style={{flexDirection: 'column'}}>
-                            <Text
-                                allowFontScaling
-                                numberOfLines={1}
-                                style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
-                                {training[0]}
-                            </Text>
 
                             <Text
                                 allowFontScaling
@@ -695,7 +665,6 @@ class Instructor extends React.Component {
                                 style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
                                 {training[1]}
                             </Text>
-                            </View>
 
                             <Text
                                 allowFontScaling
@@ -703,16 +672,12 @@ class Instructor extends React.Component {
                                 style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
                                 {
                                     this.renderEquipment(training[2])
-                                }
+                                }, {training[3]}
                             </Text>
 
-                            <Text
-                                allowFontScaling
-                                numberOfLines={1}
-                                style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
-                                {training[3]}
-                            </Text>
-
+                            <TouchableOpacity>
+                                <Icon name="close" size={20} color={"lightgray"}/>
+                            </TouchableOpacity>
 
                             {training[6] && <Icon name="wallet" size={20}/> }
 
@@ -731,27 +696,11 @@ const TrainingCell = (props) => (
             <View
                 style={{alignItems: 'center', flexDirection: 'row', flex: 1, paddingVertical: 10}}>
 
-                <View style={{flexDirection: 'column'}}>
-                    <Text
-                        allowFontScaling
-                        numberOfLines={1}
-                        style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
-                        {props.name}
-                    </Text>
-
-                    <Text
-                        allowFontScaling
-                        numberOfLines={1}
-                        style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
-                        {props.title2}
-                    </Text>
-                </View>
-
                 <Text
                     allowFontScaling
                     numberOfLines={1}
                     style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
-                    {props.typeOfEquipment}
+                    {props.title2}
                 </Text>
 
                 <Text

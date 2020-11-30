@@ -229,16 +229,16 @@ export const instructorAddEventEnd = (date) => {
 };
 
 
-export const instructorAddEventToServer = ({user, id, name, rating, instructorEventStart, instructorEventEnd, instructorSkillSki, instructorSkillSnowboard}) => {
+export const instructorAddEventToServer = async ({user, id, name, rating, instructorEventStart, instructorEventEnd, instructorSkillSki, instructorSkillSnowboard}) => {
     // console.log("This is token", user.token + " " + id);
-    return (dispatch) => {
+    return async (dispatch) => {
         console.log("This is event ", user.token, id, name, rating, instructorEventStart, instructorEventEnd, instructorSkillSki, instructorSkillSnowboard);
-        fetch(`${URL}events/`, {
+        const response = await fetch(`${URL}events/`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'Authorization': `JWT ${ user.token }`
+                'Authorization': `JWT ${user.token}`
             },
             body:
                 JSON.stringify({
@@ -264,12 +264,17 @@ export const instructorAddEventToServer = ({user, id, name, rating, instructorEv
                     // amount_school: 0,
                     // rate: 0
                 })
-        }).then((response) =>
-            response.json()
-        )
-            .then((success) => hideAdditionalForm(dispatch, success))
-            .catch((error) => console.log(error));
-    }
+
+            // }).then((response) =>
+            //     response.json()
+            // )
+            //     .then((success) => hideAdditionalForm(dispatch, success))
+            //     .catch((error) => console.log(error));
+        });
+        const text = await response.text();
+        console.log("instructorAddEventToServer");
+        console.log(text);
+    };
 };
 
 

@@ -136,7 +136,7 @@ class LoginForm extends React.Component {
 
         if (this.state.started)
             return (
-                <KeyboardAvoidingView
+                <View
                     style={container}
                     behavior="padding">
 
@@ -144,7 +144,6 @@ class LoginForm extends React.Component {
                         <TouchableHighlight onPress ={ this.unstart.bind(this)}>
                             <Image source={require('../img/logo.png')} style={imageStyle}/>
                         </TouchableHighlight>
-
 
                         <FormLabel>Логин</FormLabel>
                         <FormInput
@@ -174,7 +173,7 @@ class LoginForm extends React.Component {
                         <Text style={{margin: 10}}>{VERSION}</Text>
 
                     </View>
-                </KeyboardAvoidingView>
+                </View>
             );
         return (
             <WelcomeScreen start={this.start.bind(this)}/>
@@ -186,15 +185,15 @@ class LoginForm extends React.Component {
 const styles = StyleSheet.create({
     imageStyle: {
         alignSelf: 'center',
-        width: 140,
-        height: 140
+        width: 60,
+        height: 60
     },
     container: {
         flex: 1,
     },
     outerContainer: {
         flex: 1,
-        justifyContent: 'center',
+        marginTop: 40,
     },
     errorTextStyle: {
         fontSize: 20,

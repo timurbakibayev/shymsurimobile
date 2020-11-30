@@ -342,6 +342,16 @@ class Instructors extends React.Component {
         }
     }
 
+    getSpecializationText(instructor) {
+        const {board, ski} = instructor;
+        if (board && ski)
+            return "Лыжи и Сноуборд";
+        if (ski)
+            return "Лыжи";
+        if (board)
+            return "Сноуборд";
+    }
+
 
     makeCall = (phone) => {
         const args = {
@@ -388,8 +398,8 @@ class Instructors extends React.Component {
                                     onLogoutPressed={this.logoutPressed.bind(this)}
                                     headerText={"Shymbulak Ski & Snowboard School"}/>
                                     <View style={{ alignItems: 'center', margin: 10}}>
-                                    <View style={{width: 120, height: 120, borderRadius: 50, overflow: 'hidden'}}>
-                                        <Image style={{width: 120, height: 120}} source={{uri: `https://instructor-shym.kz${photo}`}}/>
+                                    <View style={{width: 60, height: 60, borderRadius: 50, overflow: 'hidden'}}>
+                                        <Image style={{width: 60, height: 60}} source={{uri: `https://instructor-shym.kz${photo}`}}/>
                                     </View>
                                     </View>
                             <TopSlider
@@ -406,28 +416,19 @@ class Instructors extends React.Component {
                                 uncheckedIcon='circle-o'
                                 checked={this.props.trainerAtWork}
                             />
-                            <List>
-                                <ListItem
-                                    title="Имя"
-                                    rightTitle={name}
-                                    hideChevron
-                                    rightTitleStyle={{color: '#000'}}
-                                />
-                                <ListItem
-                                    title="Телефон"
-                                    rightTitle={phone}
-                                    onPress={() => this.makeCall(phone)}
-                                    rightTitleStyle={{color: '#6666FF'}}
-                                    hideChevron
-                                />
-                                <ListItem
-                                    title="Рейтинг"
-                                    rightTitle={`${rating}`}
-                                    hideChevron
-                                    rightTitleStyle={{color: '#000'}}
-                                />
-                                {this.getSpecialization(instructor)}
-                            </List>
+                    <List>
+                        <ListItem
+                            title={`${phone}`}
+                            onPress={() => this.makeCall(phone)}
+                            hideChevron
+                            rightTitleStyle={{color: '#000', fontSize: 16}}
+                        />
+                        <ListItem
+                            title={`Рейтинг: ${rating},  ` + this.getSpecializationText(trainer)}
+                            hideChevron
+                            rightTitleStyle={{color: '#000', fontSize: 16}}
+                        />
+                    </List>
                             <Button
                                 buttonStyle={styles.buttonStyle}
                                 raised
@@ -966,13 +967,13 @@ class Instructors extends React.Component {
         if (this.props.showAddEvent) {
             // this.updateEvents(user, instructorsCurrentDate);
             return (
-                <View styel={{flex: 1}}>
+                <View style={{flex: 1}}>
                     <DatePicker
                         style={{width: 200}}
                         date={this.props.instructorEventStart}
-                        mode="datetime"
+                        mode="date"
                         placeholder="Дата начала"
-                        format="YYYY-MM-DD HH:mm:ss"
+                        format="YYYY-MM-DD"
                         minDate="2016-05-01"
                         // maxDate="2017-12-31"
                         confirmBtnText="Подтвердить"
