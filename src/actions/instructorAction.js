@@ -107,7 +107,7 @@ export const setRightDate = (currentDate) => {
             day = "0" + day;
         }
         let returningDate = year + "-" + month + "-" + day;
-        // console.log("This is current date of right", currentDate, returningDate);
+        console.log("This is current date of right", currentDate, returningDate);
         dispatch({
             type: INSTRUCTOR_RIGHT_DATE,
             payload: returningDate

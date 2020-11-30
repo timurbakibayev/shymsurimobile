@@ -6,7 +6,7 @@ import {
     Alert,
     StyleSheet,
     TouchableOpacity,
-    Picker, Image
+    Picker, Image, TextInput
 } from 'react-native';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 import {List, ListItem, Button, SearchBar, CheckBox} from 'react-native-elements';
@@ -23,6 +23,7 @@ import {
     instructorShowReport,
     instructorAddEvent,
     instructorAddEventStart,
+    instructorAddEventStartTime,
     instructorAddEventEnd,
     instructorAddReportStart,
     instructorAddReportEnd,
@@ -67,7 +68,8 @@ class Instructors extends React.Component {
         super(props);
 
         this.state = {
-            filterText: ''
+            filterText: '',
+            duration: 1,
         };
 
     }
@@ -100,6 +102,13 @@ class Instructors extends React.Component {
         this.props.getTrainers({token});
 
         Notifications._notificationSubscription = Notifications.addListener(this._handleNotification);
+
+        this.props.instructorAddEventStart(currentDay);
+        this.props.instructorAddEventStartTime("14:00:00");
+        this.props.instructorAddEventEnd(1);
+        this.setState({duration:1});
+        this.props.instructorAddReportStart(currentDay);
+        this.props.instructorAddReportEnd(currentDay);
     }
 
     updateEvents(user, currentDay) {
@@ -291,6 +300,9 @@ class Instructors extends React.Component {
         this.props.getTrainersAtWork(user, leftDate);
         this.props.setLeftDate(leftDate);
         this.props.setRightDate(leftDate);
+        this.props.instructorAddEventStart(leftDate);
+        this.props.instructorAddReportStart(leftDate);
+        this.props.instructorAddReportEnd(leftDate);
     }
 
     rightPressed() {
@@ -301,6 +313,9 @@ class Instructors extends React.Component {
         this.props.getTrainersAtWork(user, rightDate);
         this.props.setLeftDate(rightDate);
         this.props.setRightDate(rightDate);
+        this.props.instructorAddEventStart(rightDate);
+        this.props.instructorAddReportStart(rightDate);
+        this.props.instructorAddReportEnd(rightDate);
     }
 
     onDateChanged(currentDay) {
@@ -308,7 +323,10 @@ class Instructors extends React.Component {
         const {user} = this.props;
         this.props.getEventOnDate(user, currentDay);
         this.props.getTrainersAtWork(user, currentDay);
-
+        this.props.instructorAddEventStart(currentDay);
+        this.props.instructorAddReportStart(currentDay);
+        this.props.instructorAddReportEnd(currentDay);
+        console.log(this.props.leftDate,currentDay,this.props.rightDate,)
     }
 
     someMethod(text) {
@@ -417,6 +435,11 @@ class Instructors extends React.Component {
                                 checked={this.props.trainerAtWork}
                             />
                     <List>
+                        <ListItem
+                            title={`${trainer.name}`}
+                            hideChevron
+                            rightTitleStyle={{color: '#000', fontSize: 16}}
+                        />
                         <ListItem
                             title={`${phone}`}
                             onPress={() => this.makeCall(phone)}
@@ -939,18 +962,25 @@ class Instructors extends React.Component {
     //     // return (<Text>Нет данных</Text>)
     // }
 
+    onInstructorEventDateStartTime(time) {
+        console.log(time);
+        this.props.instructorAddEventStartTime(`${time}:00`);
+    }
 
     onInstructorEventDateStart(date) {
         this.props.instructorAddEventStart(date);
     }
 
     onInstructorEventDateEnd(time) {
-        if (time === 1) {
+        if (time === 1.5) {
             this.props.instructorAddEventEnd(1.5);
+            this.setState({duration:1.5});
         } else if (time === 2) {
             this.props.instructorAddEventEnd(2);
+            this.setState({duration:2});
         } else {
             this.props.instructorAddEventEnd(1);
+            this.setState({duration:1});
         }
     }
 
@@ -958,7 +988,6 @@ class Instructors extends React.Component {
     renderAdditionalForm(instructor) {
         const {buttonStyle} = styles;
         const {instructorsCurrentDate, user} = this.props;
-        let data = [["1 час", "1,5 часа", "2 часа"]];
         let colorScheme = Appearance.getColorScheme();
         let bgcolor = '#FFF';
         if (colorScheme === 'dark') {
@@ -967,49 +996,24 @@ class Instructors extends React.Component {
         if (this.props.showAddEvent) {
             // this.updateEvents(user, instructorsCurrentDate);
             return (
-                <View style={{flex: 1}}>
-                    <DatePicker
-                        style={{width: 200}}
-                        date={this.props.instructorEventStart}
-                        mode="date"
-                        placeholder="Дата начала"
-                        format="YYYY-MM-DD"
-                        minDate="2016-05-01"
-                        // maxDate="2017-12-31"
-                        confirmBtnText="Подтвердить"
-                        cancelBtnText="Отмена"
-                        customStyles={{
-                            datePickerCon: {backgroundColor: bgcolor},
-                            dateIcon: {
-                                position: 'absolute',
-                                left: 0,
-                                top: 4,
-                                marginLeft: 0
-                            },
-                            dateInput: {
-                                marginLeft: 36
-                            }
-                        }}
-                        onDateChange={this.onInstructorEventDateStart.bind(this)}
+                <View style={{flex: 1, margin: 10, borderStyle: 'solid', borderRadius: 10, borderColor: '#CCCCCC',
+                                borderWidth: 2, padding: 10, alignItems: 'center'}}>
+                     <Text style={{textAlign: 'center', alignItems: 'center'}}>
+                        Новое занятие:
+                    </Text>
+                    <View style={{display: "flex", flexDirection: "row", alignItems: "center",
+                        paddingRight: 10,
+                    }}>
+                    <TextInput
+                        style={{height: 40, width: 80,paddingLeft: 10,  fontSize: 20, border: "#AAAAAA", borderStyle: "solid", borderWidth: 1}}
+                        placeholder="Время начала занятия"
+                        onChangeText={(text) => {
+                            this.onInstructorEventDateStartTime(text)}}
+                        defaultValue={"14:00"}
                     />
-                    <View style={{flex: 1, marginBottom: 120}}>
-
-                        <DropdownMenu style={{flex: 1}}
-
-                                      bgColor={"#1668B5"}
-                                      tintColor={"white"}
-                                      selectItemColor={"#1668B5"}
-                                      data={data}
-                                      maxHeight={410}
-                            //              handler={(selection, row) => alert(data[selection][row])}
-                            //           handler={(selection, row) => console.log("This is selection", selection, row)}
-                                      handler={(selection, row) => this.onInstructorEventDateEnd(row)}
-                        >
-                            {/*<View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>*/}
-                            {/*<Text>*/}
-                            {/*Your own view Here*/}
-                            {/*</Text>*/}
-                            {/*</View>*/}
+                    </View>
+                    <View style={{flex: 1, flexDirection: 'column'}}>
+                    <View style={{flex: 1, flexDirection: 'row'}}>
                             <CheckBox
                                 left
                                 title='Лыжи'
@@ -1026,8 +1030,35 @@ class Instructors extends React.Component {
                                 uncheckedIcon='circle-o'
                                 checked={this.props.instructorSkillSnowboard}
                             />
-                        </DropdownMenu>
                     </View>
+
+                    <Text style={{textAlign: 'center', alignItems: 'center'}}>
+                        Продолжительность:
+                    </Text>
+                        <CheckBox
+                                    left
+                                    title='1 час'
+                                    onPress={()=>this.onInstructorEventDateEnd(1)}
+                                    checkedIcon='dot-circle-o'
+                                    uncheckedIcon='circle-o'
+                                    checked={this.state.duration===1}
+                                />
+                        <CheckBox
+                                    left
+                                    title='1.5 часа'
+                                    onPress={()=>this.onInstructorEventDateEnd(1.5)}
+                                    checkedIcon='dot-circle-o'
+                                    uncheckedIcon='circle-o'
+                                    checked={this.state.duration===1.5}
+                                />
+                        <CheckBox
+                                    left
+                                    title='2 часа'
+                                    onPress={()=>this.onInstructorEventDateEnd(2)}
+                                    checkedIcon='dot-circle-o'
+                                    uncheckedIcon='circle-o'
+                                    checked={this.state.duration===2}
+                                />
 
                     <Button
                         buttonStyle={buttonStyle}
@@ -1035,6 +1066,7 @@ class Instructors extends React.Component {
                         backgroundColor='#1668B5'
                         title='Сохранить'
                         onPress={() => this.onSaveEvent(instructor)}/>
+                </View>
                 </View>
             )
         } else {
@@ -1049,7 +1081,7 @@ class Instructors extends React.Component {
     };
 
     onSaveEvent = (instructor) => {
-        const {user, showAddEvent, instructorEventStart, instructorEventEnd, instructorSkillSki, instructorSkillSnowboard} = this.props;
+        const {user, showAddEvent, instructorEventStartTime, instructorEventStartDate,  instructorEventEnd, instructorSkillSki, instructorSkillSnowboard} = this.props;
         const {id, name, rating} = instructor;
         // console.log("All about instructor", id + " " + name + " " + rating + " " + user.token);
         // console.log("This is event to save ", instructorEventStart + " " + instructorEventEnd);
@@ -1058,7 +1090,8 @@ class Instructors extends React.Component {
             id,
             name,
             rating,
-            instructorEventStart,
+            instructorEventStartDate,
+            instructorEventStartTime,
             instructorEventEnd,
             instructorSkillSki,
             instructorSkillSnowboard
@@ -1187,7 +1220,8 @@ const mapStateToProps = ({users, auth}) => {
         instructorReportEnd,
         instructorCurrentDate,
         instructorEventsOnDate,
-        instructorEventStart,
+        instructorEventStartDate,
+        instructorEventStartTime,
         instructorEventEnd,
         reports,
         notification,
@@ -1213,10 +1247,11 @@ const mapStateToProps = ({users, auth}) => {
         showAddReport,
         instructorReportStart,
         instructorReportEnd,
-        instructorEventStart,
         instructorEventEnd,
         instructorCurrentDate,
         instructorEventsOnDate,
+        instructorEventStartDate,
+        instructorEventStartTime,
         reports,
         notification,
         reload,
@@ -1338,6 +1373,7 @@ export default connect(mapStateToProps, {
     // getCurrentEvents,
     logOut,
     instructorAddEventStart,
+    instructorAddEventStartTime,
     instructorAddEventEnd,
     addInstructor,
     setCurrentDate,

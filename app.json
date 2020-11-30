@@ -8,13 +8,13 @@
       "android",
       "web"
     ],
-    "version": "11",
+    "version": "12",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#FFFFFF"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -28,7 +28,8 @@
     },
     "android": {
       "package": "com.sagrad.surimobileinfo",
-      "versionCode": 11
+      "versionCode": 12,
+      "permissions": []
     }
   }
 }

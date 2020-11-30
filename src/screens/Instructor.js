@@ -339,7 +339,7 @@ class Instructor extends React.Component {
                         date={this.props.instructorReportStart}
                         isDarkModeEnabled={false}
                         mode="date"
-                        placeholder="Дата начала"
+                        placeholder="от"
                         format="YYYY-MM-DD"
                         minDate="2016-05-01"
                         // maxDate="2017-12-31"
@@ -364,7 +364,7 @@ class Instructor extends React.Component {
                         style={{width: 200, margin: 15}}
                         date={this.props.instructorReportEnd}
                         mode="date"
-                        placeholder="Дата конца"
+                        placeholder="до"
                         format="YYYY-MM-DD"
                         minDate="2016-05-01"
                         // maxDate="2017-12-31"
@@ -629,13 +629,21 @@ class Instructor extends React.Component {
                         <View
                             style={{alignItems: 'center', flexDirection: 'row', flex: 1, paddingVertical: 10}}>
 
+                            <View style={{flexDirection: 'column'}}>
+                            <Text
+                                allowFontScaling
+                                numberOfLines={1}
+                                style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
+                                {training[0]}
+                            </Text>
+
                             <Text
                                 allowFontScaling
                                 numberOfLines={1}
                                 style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
                                 {training[1]}
                             </Text>
-
+                            </View>
                             <Text
                                 allowFontScaling
                                 numberOfLines={1}
@@ -659,12 +667,21 @@ class Instructor extends React.Component {
                         <View
                             style={{alignItems: 'center', flexDirection: 'row', flex: 1, paddingVertical: 10}}>
 
+                            <View style={{flexDirection: 'column'}}>
+                            <Text
+                                allowFontScaling
+                                numberOfLines={1}
+                                style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
+                                {training[0]}
+                            </Text>
+
                             <Text
                                 allowFontScaling
                                 numberOfLines={1}
                                 style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
                                 {training[1]}
                             </Text>
+                            </View>
 
                             <Text
                                 allowFontScaling

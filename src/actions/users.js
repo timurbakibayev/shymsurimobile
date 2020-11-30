@@ -138,6 +138,7 @@ export const getEvents = ({token}) => {
 export const getEventOnDate = (user, currentDay) => {
     return (dispatch) => {
         console.log("This is current event date ", currentDay);
+        console.log("Request:", `${URL}events/?date=${currentDay}`);
         dispatch({type: USERS_LOADING});
         fetch(`${URL}events/?date=${currentDay}`, {
             method: 'GET',
@@ -147,7 +148,9 @@ export const getEventOnDate = (user, currentDay) => {
                 'Authorization': `JWT ${ user.token }`
             }
         }).then((response) => response.json())
-            .then((events) => getEventsSuccess(dispatch, events))
+            .then((events) => {
+                getEventsSuccess(dispatch, events);
+            })
             .catch((error) => console.log(error));
     }
 
@@ -164,45 +167,35 @@ export const getEventOnDate = (user, currentDay) => {
 export const changeDate = (instructorsCurrentDate, sign) => {
     return (dispatch) => {
         let dateTime = instructorsCurrentDate.split("-");
-        let anotherDate = new Date(dateTime[0] + '/' + dateTime[1] + '/' + dateTime[2]);
+        let anotherDate = new Date(parseInt(dateTime[0]), parseInt(dateTime[1])-1, parseInt(dateTime[2]),1,1,1);
+        console.log("actions/users/changeDate")
+        console.log(dateTime);
+        console.log(anotherDate);
+
         if (sign === "+") {
             anotherDate.setDate(anotherDate.getDate() + 1);
-            let month = (anotherDate.getMonth() + 1);
-            let day = anotherDate.getDate();
-            let year = anotherDate.getFullYear();
-            if (month < 10) {
-                month = "0" + month;
-            }
-
-            if (day < 10) {
-                // console.log("This is smaller that 10");
-                day = "0" + day;
-                // console.log("This is new date", day);
-            }
-            let returningDate = year + "-" + month + "-" + day;
-            dispatch({
-                type: INSTRUCTORS_CURRENT_DATE,
-                payload: returningDate
-            });
-        } else {
+         } else {
             anotherDate.setDate(anotherDate.getDate() - 1);
-            let month = (anotherDate.getMonth() + 1);
-            let day = anotherDate.getDate();
-            let year = anotherDate.getFullYear();
-            if (month < 10) {
-                month = "0" + month;
-            }
-            if (day < 10) {
-                // console.log("This is smaller that 10");
-                day = "0" + day;
-                // console.log("This is new date", day);
-            }
-            let returningDate = year + "-" + month + "-" + day;
-            dispatch({
-                type: INSTRUCTORS_CURRENT_DATE,
-                payload: returningDate
-            });
         }
+
+        console.log(anotherDate);
+        let month = (anotherDate.getMonth() + 1);
+        let day = anotherDate.getDate();
+        let year = anotherDate.getFullYear();
+        if (month < 10) {
+            month = "0" + month;
+        }
+        if (day < 10) {
+            // console.log("This is smaller that 10");
+            day = "0" + day;
+            // console.log("This is new date", day);
+        }
+        let returningDate = year + "-" + month + "-" + day;
+        dispatch({
+            type: INSTRUCTORS_CURRENT_DATE,
+            payload: returningDate
+        });
+
     }
 };
 
@@ -217,7 +210,16 @@ export const addInstructor = () => {
 export const instructorAddEventStart = (date) => {
     return {
         type: INSTRUCTOR_DETAIL_EVENT_START,
+        datetime: "date",
         payload: date
+    }
+};
+
+export const instructorAddEventStartTime = (time) => {
+    return {
+        type: INSTRUCTOR_DETAIL_EVENT_START,
+        datetime: "time",
+        payload: time
     }
 };
 
@@ -229,11 +231,35 @@ export const instructorAddEventEnd = (date) => {
 };
 
 
-export const instructorAddEventToServer = async ({user, id, name, rating, instructorEventStart, instructorEventEnd, instructorSkillSki, instructorSkillSnowboard}) => {
+export const instructorAddEventToServer = ({user, id, name, rating, instructorEventStartDate, instructorEventStartTime, instructorEventEnd, instructorSkillSki, instructorSkillSnowboard}) => {
     // console.log("This is token", user.token + " " + id);
-    return async (dispatch) => {
-        console.log("This is event ", user.token, id, name, rating, instructorEventStart, instructorEventEnd, instructorSkillSki, instructorSkillSnowboard);
-        const response = await fetch(`${URL}events/`, {
+    return (dispatch) => {
+        console.log("This is event ",
+            JSON.stringify({
+                    start: `${instructorEventStartDate} ${instructorEventStartTime}`,
+                    duration: instructorEventEnd,
+                    text: '',
+                    approved: false,
+                    resource: id,
+                    resource_txt: name,
+                    resource_rating: rating,
+                    ski: instructorSkillSki,
+                    board: instructorSkillSnowboard,
+                    tarif: 1,
+                    // tarif_txt: "Нет тарифа",
+                    // cssClass: "my-event",
+                    // resizeDisabled: false,
+                    backColor: "#F7F7F9",
+                    own_client: true,
+                    // group_size: 1,
+                    // bubbleHtml: "1h CH (8500 тенге)<br>Свой клиент",
+                    // amount: 0,
+                    // amount_instructor: 0,
+                    // amount_school: 0,
+                    // rate: 0
+                })
+            );
+        fetch(`${URL}events/`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -242,7 +268,7 @@ export const instructorAddEventToServer = async ({user, id, name, rating, instru
             },
             body:
                 JSON.stringify({
-                    start: instructorEventStart,
+                    start: `${instructorEventStartDate} ${instructorEventStartTime}`,
                     duration: instructorEventEnd,
                     text: '',
                     approved: false,
@@ -265,16 +291,12 @@ export const instructorAddEventToServer = async ({user, id, name, rating, instru
                     // rate: 0
                 })
 
-            // }).then((response) =>
-            //     response.json()
-            // )
-            //     .then((success) => hideAdditionalForm(dispatch, success))
-            //     .catch((error) => console.log(error));
-        });
-        const text = await response.text();
-        console.log("instructorAddEventToServer");
-        console.log(text);
-    };
+            }).then((response) =>
+                response.json()
+            )
+                .then((success) => hideAdditionalForm(dispatch, success))
+                .catch((error) => console.log(error));
+        }
 };
 
 
@@ -482,9 +504,15 @@ export const returnToInstructor = () => {
 export const setLeftDate = (currentDate) => {
     return (dispatch) => {
         // dispatch({type: INSTRUCTOR_DATA_LOADING});
+        console.log("currentDate in setLeftDate",currentDate);
         let dateTime = currentDate.split("-");
-        let anotherDate = new Date(dateTime[0] + '/' + dateTime[1] + '/' + dateTime[2]);
+        console.log("new date:",parseInt(dateTime[0]), parseInt(dateTime[1])-1, parseInt(dateTime[2]),1,1,1);
+        let anotherDate = new Date(parseInt(dateTime[0]), parseInt(dateTime[1])-1, parseInt(dateTime[2]),1,1,1);
+        console.log("same another date", anotherDate);
         anotherDate.setDate(anotherDate.getDate() - 1);
+        console.log("parsed current date", dateTime);
+        console.log("another date - 1 = ", anotherDate);
+
         let month = (anotherDate.getMonth() + 1);
         let day = anotherDate.getDate();
         let year = anotherDate.getFullYear();
@@ -507,7 +535,7 @@ export const setRightDate = (currentDate) => {
     return (dispatch) => {
         // dispatch({type: INSTRUCTOR_DATA_LOADING});
         let dateTime = currentDate.split("-");
-        let anotherDate = new Date(dateTime[0] + '/' + dateTime[1] + '/' + dateTime[2]);
+        let anotherDate = new Date(parseInt(dateTime[0]), parseInt(dateTime[1])-1, parseInt(dateTime[2]),1,1,1);
         anotherDate.setDate(anotherDate.getDate() + 1);
         let month = (anotherDate.getMonth() + 1);
         let day = anotherDate.getDate();
@@ -519,7 +547,7 @@ export const setRightDate = (currentDate) => {
             day = "0" + day;
         }
         let returningDate = year + "-" + month + "-" + day;
-        // console.log("This is current date of right", currentDate, returningDate);
+        console.log("This is current date of right", currentDate, returningDate);
         dispatch({
             type: INSTRUCTOR_RIGHT_DATE,
             payload: returningDate

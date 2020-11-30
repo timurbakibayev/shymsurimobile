@@ -69,7 +69,10 @@ export default (state = INITIAL_STATE, action) => {
         case INSTRUCTOR_REPORT_END:
             return {...state, instructorReportEnd: action.payload};
         case INSTRUCTOR_DETAIL_EVENT_START:
-            return {...state, instructorEventStart: action.payload};
+            if (action.datetime == "date")
+                return {...state, instructorEventStartDate: action.payload, instructorDataLoading: false};
+            else
+                return {...state, instructorEventStartTime: action.payload, instructorDataLoading: false};
         case INSTRUCTOR_DETAIL_EVENT_END:
             return {...state, instructorEventEnd: action.payload};
         case INSTRUCTOR_DETAIL_HIDE_EVENT:
