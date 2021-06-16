@@ -6,7 +6,6 @@ import {
     Image,
     ScrollView,
     KeyboardAvoidingView,
-    AsyncStorage,
     TouchableHighlight
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -15,6 +14,7 @@ import {Card, CardSection, Input, Spinner} from "./common";
 import {FormLabel, FormInput, Button} from 'react-native-elements';
 import {LOGOUT_SUCCESS_TEXT, VERSION} from "../actions/types";
 import WelcomeScreen from '../screens/welcome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // import OneSignal from 'react-native-onesignal';
 
@@ -25,6 +25,8 @@ class LoginForm extends React.Component {
         super(props);
         this.state = {
             started: false,
+            userName: "",
+            password: "",
         };
         self = this;
         AsyncStorage.getItem("admin_area").then((password) => {
@@ -57,11 +59,10 @@ class LoginForm extends React.Component {
 
         const userName = await AsyncStorage.getItem("userName");
 
-        self.props.userNameChanged(userName);
-
         const password = await AsyncStorage.getItem("password");
+        console.log("recovered", userName, password)
 
-        self.props.passwordChanged(password);
+        this.setState({"userName": userName, "password": password})
 
         const token = await AsyncStorage.getItem("token");
 
@@ -72,20 +73,11 @@ class LoginForm extends React.Component {
             }
         };
 
-
-    onUserNameChange(text) {
-        this.props.userNameChanged(text);
-    }
-
-    onPasswordChange(text) {
-        this.props.passwordChanged(text);
-    }
-
     onButtonPressed() {
-        const {userName, password} = this.props;
-        this.props.loginUser({userName, password});
-        LoginForm.saveItem("userName", userName);
-        LoginForm.saveItem("password", password);
+        this.props.loginUser(this.state);
+        LoginForm.saveItem("userName", this.state.userName);
+        LoginForm.saveItem("password", this.state.password);
+        console.log("saved")
     }
 
 
@@ -150,8 +142,8 @@ class LoginForm extends React.Component {
                             autoCorrect={false}
                             autoCapitalize='none'
                             placeholder="Логин"
-                            onChangeText={this.onUserNameChange.bind(this)}
-                            value={this.props.userName}
+                            onChangeText={(text)=>{this.setState({userName: text})}}
+                            value={this.state.userName}
                         />
                         <FormLabel>Пароль</FormLabel>
                         <FormInput
@@ -159,8 +151,8 @@ class LoginForm extends React.Component {
                             autoCapitalize='none'
                             secureTextEntry
                             placeholder="Пароль"
-                            onChangeText={this.onPasswordChange.bind(this)}
-                            value={this.props.password}
+                            onChangeText={(text)=>{this.setState({password: text})}}
+                            value={this.state.password}
                         />
                         <Text style={errorTextStyle}>
                             {this.props.error}

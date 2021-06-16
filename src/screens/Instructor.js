@@ -50,6 +50,7 @@ class Instructor extends React.Component {
         let now = new Date();
         now.setMinutes(0);
         this.state = {
+            showTime: false,
             notes: "",
             duration: 1,
             startTime: now,
@@ -124,6 +125,7 @@ class Instructor extends React.Component {
 
     onTimeChange = (event, selectedDate) => {
         const currentDate = selectedDate || this.state.startTime;
+        this.setState({"showTime": Platform.OS === 'ios'})
         let hours = `${currentDate.getUTCHours()+6}`;
         let minutes = `${currentDate.getMinutes()}`;
         if (hours.length < 2) {
@@ -134,8 +136,10 @@ class Instructor extends React.Component {
         }
         const textTime =`${hours}:${minutes}:00`;
         this.setState({startTime: currentDate})
+        this.setState({textTime: textTime})
         this.props.instructorAddEventStartTime(textTime);
         console.log(textTime);
+        this.setState({"showTime": Platform.OS === 'ios'})
     };
 
     makeCall = (phone) => {
@@ -281,6 +285,7 @@ class Instructor extends React.Component {
                     </View>
 
                     <TopSlider
+                        currendDateHuman={this.formatDate(this.props.instructorCurrentDate)}
                         currentDate={this.props.instructorCurrentDate}
                         onLeftPressed={this.leftPressed.bind(this)}
                         onRightPressed={this.rightPressed.bind(this)}
@@ -300,7 +305,7 @@ class Instructor extends React.Component {
                             title='Новое занятие'
                             onPress={() => this.setState({showNewForm: true})}/>
                     }
-                    {this.state.showReport && this.renderReports(trainer)}
+                    {this.renderReports(trainer)}
                     {this.state.showReport && this.renderReportForm()}
                     {!this.state.showReport &&
                         <Button
@@ -310,6 +315,7 @@ class Instructor extends React.Component {
                             title='Новый отчет'
                             onPress={() => this.setState({showReport: true})}/>
                     }
+                    <View style={{marginBottom: 200}}></View>
 
 
                 </ScrollView>
@@ -395,6 +401,16 @@ class Instructor extends React.Component {
         this.props.instructorSnowboard(this.props.instructorSkillSnowboard);
     }
 
+    formatDate(dateIn) {
+        let date = new Date(dateIn);
+        let year = date.getFullYear();
+        let month = ["янв","фев","марта","апр","мая","июня","июля","авг","сен","окт","ноя","дек"][date.getMonth()];
+        let dt = date.getDate();
+        if (dt < 10) {
+          dt = '0' + dt;
+        }
+        return `${dt} ${month} ${year}`
+    }
 
     renderReportForm() {
 
@@ -522,7 +538,7 @@ class Instructor extends React.Component {
                 return (
                     <TableView>
                         <Section>
-                            <Text style={{backgroundColor: "white", fontSize: 17, padding: 15}}>Занятия сегодня</Text>
+                            <Text style={{backgroundColor: "white", fontSize: 17, padding: 15}}>Занятия на {this.formatDate(this.props.instructorCurrentDate)}</Text>
                             {trainings.map((training) => (
                                 this.instructorTraining(training)
                             ))}
@@ -560,11 +576,12 @@ class Instructor extends React.Component {
                     <View style={{display: "flex", flexDirection: "row", alignItems: "center",
                         paddingRight: 10,
                     }}>
-                        <Text style={{textAlign: 'center', alignItems: 'center'}}>
+                        {Platform.OS !== 'ios' && <Button onPress={()=>{this.setState({"showTime": true})}} title={"Время начала: " + this.state.textTime} />}
+                        {Platform.OS === 'ios' && <Text style={{textAlign: 'center', alignItems: 'center'}}>
                             Время начала:
-                        </Text>
+                        </Text>}
 
-                        <DateTimePicker
+                        {(this.state.showTime || Platform.OS === 'ios') && <DateTimePicker
                           style={{ height: 50, width: 100}}
                           value={this.state.startTime}
                           mode="time"
@@ -573,7 +590,7 @@ class Instructor extends React.Component {
                           timeZoneOffsetInMinutes={60*6}
                           onChange={this.onTimeChange.bind(this)}
                           minuteInterval={15}
-                        />
+                        />}
                     </View>
                     <View style={{flex: 1, flexDirection: 'column'}}>
 
@@ -710,6 +727,7 @@ class Instructor extends React.Component {
         const {user, instructorReportStart, instructorReportEnd} = this.props;
         // console.log("This is report info ", user.token, instructorReportStart, instructorReportEnd);
         this.props.getReportOnSelectedDate(user, instructorReportStart, instructorReportEnd)
+        this.setState({showReport: false})
     };
 
     deleteEvent = (id) => {
@@ -727,7 +745,7 @@ class Instructor extends React.Component {
     }
 
     instructorTraining(training) {
-        const eventObject = training[7];
+        let eventObject = training[7];
         if (training[5]) {
             return (
                 <Cell key={training[0]+training[1]}
@@ -735,7 +753,7 @@ class Instructor extends React.Component {
                         <View
                             style={{alignItems: 'center', flexDirection: 'row', flex: 1, paddingVertical: 10}}>
 
-                            <View style={{flexDirection: 'column'}}>
+                            <View style={{flexDirection: 'column', flex: 0.3}}>
                             <Text
                                 allowFontScaling
                                 numberOfLines={1}
@@ -747,11 +765,11 @@ class Instructor extends React.Component {
                                 allowFontScaling
                                 numberOfLines={1}
                                 style={{flex: 1, fontSize: 14, textAlign: 'left'}}>
-                                {eventObject.rate} тг
+                                {training[0]}
                             </Text>
                             </View>
                             <View style={{
-                                flex: 1, flexDirection: 'column',
+                                flex: 0.7, flexDirection: 'column',
                                 marginRight: 10, marginLeft: 20,
                                 borderColor: "green",
                                 borderLeftWidth: 1,
@@ -765,12 +783,18 @@ class Instructor extends React.Component {
                                         this.renderEquipment(training[2])
                                     }, {training[3]}
                                 </Text>
-                                <Text
+                                {eventObject.trainer_note !== "" && <Text
                                     allowFontScaling
                                     // numberOfLines={1}
                                     style={{flex: 1, fontSize: 14, textAlign: 'left'}}>
                                     {eventObject.trainer_note}
-                                </Text>
+                                </Text>}
+                                {eventObject.text !== "" && <Text
+                                    allowFontScaling
+                                    // numberOfLines={1}
+                                    style={{flex: 1, fontSize: 14, textAlign: 'left'}}>
+                                    {eventObject.text}
+                                </Text>}
                             </View>
 
                             <TouchableOpacity onPress={this.deleteEvent.bind(this, training[4])}>
@@ -787,30 +811,49 @@ class Instructor extends React.Component {
                         <View
                             style={{alignItems: 'center', flexDirection: 'row', flex: 1, paddingVertical: 10}}>
 
-                            <View style={{flexDirection: 'column'}}>
+                            <View style={{flexDirection: 'column', flex: 0.3}}>
                             <Text
                                 allowFontScaling
                                 numberOfLines={1}
-                                style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
-                                {training[0]}
-                            </Text>
-
-                            <Text
-                                allowFontScaling
-                                numberOfLines={1}
-                                style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
+                                style={{flex: 1, fontSize: 14, textAlign: 'left'}}>
                                 {training[1]}
                             </Text>
-                            </View>
 
                             <Text
                                 allowFontScaling
                                 numberOfLines={1}
-                                style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
+                                style={{flex: 1, fontSize: 14, textAlign: 'left'}}>
+                                {training[0]}
+                            </Text>
+                            </View>
+                            <View style={{
+                                flex: 0.7, flexDirection: 'column',
+                                marginRight: 10, marginLeft: 20,
+                                borderColor: "green",
+                                borderLeftWidth: 1,
+                                paddingLeft: 5,
+                            }}>
+                            <Text
+                                allowFontScaling
+                                numberOfLines={1}
+                                style={{flex: 1, fontSize: 14, textAlign: 'left'}}>
                                 {
                                     this.renderEquipment(training[2])
                                 }, {training[3]}
                             </Text>
+                            {eventObject.trainer_note !== "" && <Text
+                                    allowFontScaling
+                                    // numberOfLines={1}
+                                    style={{flex: 1, fontSize: 14, textAlign: 'left'}}>
+                                    {eventObject.trainer_note}
+                                </Text>}
+                                {eventObject.text !== "" && <Text
+                                    allowFontScaling
+                                    // numberOfLines={1}
+                                    style={{flex: 1, fontSize: 14, textAlign: 'left'}}>
+                                    {eventObject.text}
+                                </Text>}
+                            </View>
 
                             <TouchableOpacity>
                                 <Icon name="close" size={20} color={"lightgray"}/>

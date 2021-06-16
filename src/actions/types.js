@@ -116,4 +116,4 @@ export const USER_LOGGED_IN = 'user_logged_in';
 // export const URL = "http://185.111.107.61/";
 export const URL = 'https://instructor-shym.kz/';
 
-export const VERSION = 'ТОО SAGRAD, Версия 16 от 21.12.2020';
+export const VERSION = 'ТОО SAGRAD, Версия 17 от 16.06.2021';
