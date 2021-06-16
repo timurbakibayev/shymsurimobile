@@ -190,10 +190,11 @@ const onInstructorReportSuccess = (dispatch, responseJson) => {
 };
 
 
-export const instructorAddEventToServer = ({user, id, name, rating, instructorEventStart, instructorEventEnd}) => {
+export const instructorAddEventToServer = ({user, id, name, rating, instructorEventStart, instructorEventEnd, notes}) => {
     // console.log("This is token", user.token + " " + id);
+    // This is the right one!!!! This function is called when instructor adds an event!!!
     return (dispatch) => {
-        console.log("This is event ", user.token, id, name, rating, instructorEventStart, instructorEventEnd);
+        console.log("This is event ", user.token, id, name, rating, instructorEventStart, instructorEventEnd, notes);
         fetch(`${URL}events/`, {
             method: 'POST',
             headers: {
@@ -210,6 +211,7 @@ export const instructorAddEventToServer = ({user, id, name, rating, instructorEv
                     resource: id,
                     resource_txt: name,
                     resource_rating: rating,
+                    trainer_note: notes,
                     ski: false,
                     board: false,
                     tarif: 1,

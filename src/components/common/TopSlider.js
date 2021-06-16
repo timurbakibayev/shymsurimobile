@@ -2,8 +2,9 @@ import React from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
+import {CheckBox} from "react-native-elements";
 
-const TopSlider = ({onLeftPressed, currentDate, onRightPressed, onDateSelected}) => {
+const TopSlider = ({onLeftPressed, currentDate, onRightPressed, onDateSelected, atWork, atWorkPressed}) => {
     const {toolbar, toolbarButton, toolbarTitle} = styles;
     return (
         <View style={toolbar}>
@@ -14,14 +15,28 @@ const TopSlider = ({onLeftPressed, currentDate, onRightPressed, onDateSelected})
                 />
             </TouchableOpacity>
             <View style={toolbarTitle}>
+                <CheckBox
+                        left
+                        title='На Работе'
+                        onPress={atWorkPressed}
+                        checkedIcon='dot-circle-o'
+                        uncheckedIcon='circle-o'
+                        checked={atWork}
+                        containerStyle={{backgroundColor: "white", borderWidth: 0}}
+                        textStyle={{borderWidth: 0}}
+                    />
                 <DatePicker
                     style={{
-                        width: 200
+                        //width: 100
                     }}
                     date={currentDate}
                     customStyles={{
                         dateInput: {
-                            borderColor: '#FFF', borderWidth: 0
+                            borderColor: '#FFF', borderWidth: 0,
+                            justifyContent: "center",
+                            display: "flex",
+                            flexDirection: "row",
+                            marginTop: 15,
                         }
                     }}
                     mode="date"
@@ -64,6 +79,8 @@ const styles = StyleSheet.create({
     },
     toolbarTitle: {
         justifyContent: 'center',
+        display: "flex",
+        flexDirection: "row",
     }
 });
 

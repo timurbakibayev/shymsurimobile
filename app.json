@@ -8,7 +8,7 @@
       "android",
       "web"
     ],
-    "version": "16",
+    "version": "17",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -29,7 +29,7 @@
     "android": {
       "package": "com.sagrad.surimobileinfo",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 16,
+      "versionCode": 17,
       "permissions": [],
       "useNextNotificationsApi": true
     }

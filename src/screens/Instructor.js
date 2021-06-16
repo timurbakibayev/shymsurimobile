@@ -7,6 +7,7 @@ import {connect} from 'react-redux';
 import {Spinner} from "../components/common/Spinner";
 import DropdownMenu from "react-native-dropdown-menu";
 import DatePicker from 'react-native-datepicker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 // import DatePicker from "react-native-modal-datetime-picker";
 import {
     setCurrentDate,
@@ -46,8 +47,12 @@ import {TextInput} from "react-native";
 class Instructor extends React.Component {
     constructor(props) {
         super(props);
+        let now = new Date();
+        now.setMinutes(0);
         this.state = {
-          duration: 1,
+            notes: "",
+            duration: 1,
+            startTime: now,
         };
     }
     componentDidMount() {
@@ -67,7 +72,7 @@ class Instructor extends React.Component {
         this.props.setLeftDate(currentDay);
         this.props.setRightDate(currentDay);
         this.props.instructorAddEventStart(currentDay);
-        this.props.instructorAddEventStartTime("14:00:00");
+        this.onTimeChange(null,this.state.startTime);
         // console.log("This is current date for instructor", currentDay);
         const {user} = this.props;
         this.props.getTrainers(user);
@@ -116,6 +121,23 @@ class Instructor extends React.Component {
             return "Сноуборд";
     }
 
+
+    onTimeChange = (event, selectedDate) => {
+        const currentDate = selectedDate || this.state.startTime;
+        let hours = `${currentDate.getUTCHours()+6}`;
+        let minutes = `${currentDate.getMinutes()}`;
+        if (hours.length < 2) {
+            hours = "0" + hours;
+        }
+        if (minutes.length < 2) {
+            minutes = "0" + minutes;
+        }
+        const textTime =`${hours}:${minutes}:00`;
+        this.setState({startTime: currentDate})
+        this.props.instructorAddEventStartTime(textTime);
+        console.log(textTime);
+    };
+
     makeCall = (phone) => {
         const args = {
             number: phone,
@@ -142,6 +164,8 @@ class Instructor extends React.Component {
         this.props.instructorAddEventStart(leftDate);
         this.props.instructorAddReportStart(leftDate);
         this.props.instructorAddReportEnd(leftDate);
+        this.setState({showNewForm: false})
+        this.setState({showReport: false})
     }
 
     rightPressed() {
@@ -154,6 +178,8 @@ class Instructor extends React.Component {
         this.props.instructorAddEventStart(rightDate);
         this.props.instructorAddReportStart(rightDate);
         this.props.instructorAddReportEnd(rightDate);
+        this.setState({showNewForm: false})
+        this.setState({showReport: false})
     }
 
     onDateChanged(currentDay) {
@@ -225,45 +251,65 @@ class Instructor extends React.Component {
                             onLogoutPressed={this.logoutPressed.bind(this)}
                             style={{width: '70%'}}
                     />
-                    <View style={{ alignItems: 'center', margin: 10}}>
-                    <View style={{width: 60, height: 60, borderRadius: 50, overflow: 'hidden'}}>
-                        <Image style={{width: 60, height: 60}} source={{uri: `https://instructor-shym.kz${photo}`}}
-                        /></View></View>
+                    <View style={{display: "flex", flexDirection: "row"}}>
+
+                        <View style={{ alignItems: 'center', margin: 10, width: 100}}>
+                            <View style={{width: "100%", height: 100, borderRadius: 50, overflow: 'hidden'}}>
+                                <Image style={{width: "100%", height: "100%"}} source={{uri: `https://instructor-shym.kz${photo}`}}
+                                /></View>
+                        </View>
+
+                        {/*{this.renderQueue(trainer.queue)}*/}
+                        <View style={{flex: 1}}>
+                            <ListItem
+                                title={`${phone}`}
+                                onPress={() => this.makeCall(phone)}
+                                hideChevron
+                                rightTitleStyle={{color: '#000', fontSize: 16}}
+                            />
+                            <ListItem
+                                title={`Рейтинг: ${rating}`}
+                                hideChevron
+                                rightTitleStyle={{color: '#000', fontSize: 16}}
+                            />
+                            <ListItem
+                                title={this.getSpecializationText(trainer)}
+                                hideChevron
+                                rightTitleStyle={{color: '#000', fontSize: 16}}
+                            />
+                        </View>
+                    </View>
+
                     <TopSlider
                         currentDate={this.props.instructorCurrentDate}
                         onLeftPressed={this.leftPressed.bind(this)}
                         onRightPressed={this.rightPressed.bind(this)}
                         onDateSelected={this.onDateChanged.bind(this)}
+                        atWork={this.props.trainerAtWork}
+                        atWorkPressed={this.onTrainerAtWorkChecked.bind(this)}
                     />
-                    <CheckBox
-                        left
-                        title='На Работе'
-                        onPress={this.onTrainerAtWorkChecked.bind(this)}
-                        checkedIcon='dot-circle-o'
-                        uncheckedIcon='circle-o'
-                        checked={this.props.trainerAtWork}
-                    />
-                    {/*{this.renderQueue(trainer.queue)}*/}
-                    <List>
-                        <ListItem
-                            title={`${phone}`}
-                            onPress={() => this.makeCall(phone)}
-                            hideChevron
-                            rightTitleStyle={{color: '#000', fontSize: 16}}
-                        />
-                        <ListItem
-                            title={`Рейтинг: ${rating},  ` + this.getSpecializationText(trainer)}
-                            hideChevron
-                            rightTitleStyle={{color: '#000', fontSize: 16}}
-                        />
-                    </List>
 
                     {this.renderEvents(trainer)}
 
-                    {this.renderAdditionalForm(trainer)}
-
-                    {this.renderReports(trainer)}
-                    {this.renderReportForm()}
+                    {this.state.showNewForm && this.renderAdditionalForm(trainer)}
+                    {!this.state.showNewForm &&
+                        <Button
+                            buttonStyle={{marginTop: 20}}
+                            raised
+                            backgroundColor='#1668B5'
+                            title='Новое занятие'
+                            onPress={() => this.setState({showNewForm: true})}/>
+                    }
+                    {this.state.showReport && this.renderReports(trainer)}
+                    {this.state.showReport && this.renderReportForm()}
+                    {!this.state.showReport &&
+                        <Button
+                            buttonStyle={{marginTop: 20}}
+                            raised
+                            backgroundColor='#1668B5'
+                            title='Новый отчет'
+                            onPress={() => this.setState({showReport: true})}/>
+                    }
 
 
                 </ScrollView>
@@ -284,13 +330,45 @@ class Instructor extends React.Component {
             {this.props.reports.length > 0 &&
                 <TableView>
                     <Section>
-                        <CellVariant name="Забронировано" title2="Подтверждено" title3="Часы" title4="Начисленно"/>
                         {this.props.reports.map((report) => (
-                            this.instructorReport(report, instructor)
+                            <View>
+                                <View style={{display: "flex", flexDirection: "row",
+                                    padding: 10,
+                                    paddingLeft: 30,
+                                    paddingRight: 30,
+                                    backgroundColor: "white"}}>
+                                    <Text style={{textAlign: "left"}}>Забронировано занятий</Text>
+                                    <Text style={{flex: 1, textAlign: "right"}}>{report[1]}</Text>
+                                </View>
+                                <View style={{display: "flex", flexDirection: "row",
+                                    padding: 10,
+                                    paddingLeft: 30,
+                                    paddingRight: 30,
+                                    backgroundColor: "white"}}>
+                                    <Text style={{ textAlign: "left"}}>Из них подтверждено</Text>
+                                    <Text style={{flex: 1, textAlign: "right"}}>{report[2]}</Text>
+                                </View>
+                                <View style={{display: "flex", flexDirection: "row",
+                                    padding: 10,
+                                    paddingLeft: 30,
+                                    paddingRight: 30,
+                                    backgroundColor: "white"}}>
+                                    <Text style={{ textAlign: "left"}}>Всего часов</Text>
+                                    <Text style={{flex: 1, textAlign: "right"}}>{report[3]}</Text>
+                                </View>
+                                <View style={{display: "flex", flexDirection: "row",
+                                    padding: 10,
+                                    paddingLeft: 30,
+                                    paddingRight: 30,
+                                    backgroundColor: "white"}}>
+                                    <Text style={{textAlign: "left"}}>Начислено</Text>
+                                    <Text style={{flex: 1, textAlign: "right"}}>{report[4].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')} тг</Text>
+                                </View>
+                            </View>
                         ))}
                     </Section>
                 </TableView>}
-            {this.props.reports.length === 0 && <Text style={styles.noDataText}>Отчет не найден</Text>}
+            {this.props.reports.length === 0 && <Text style={styles.noDataText}></Text>}
         </View>)
     }
 
@@ -329,8 +407,8 @@ class Instructor extends React.Component {
         const {buttonStyle} = styles;
         if (2+2==4 || this.props.instructorShowReportForm) {
             return (
-                <View style={{flex: 1, margin: 10, borderStyle: 'solid', borderRadius: 10, borderColor: '#CCCCCC',
-                                borderWidth: 2, padding: 10, alignItems: 'center'}}>
+                <View style={{flex: 1, margin: 10,
+                                 padding: 10, alignItems: 'center'}}>
                     <Text align='center' style={{width: '100%', textAlign: 'center', alignItems: 'center'}}>
                         Новый отчет:
                     </Text>
@@ -430,7 +508,7 @@ class Instructor extends React.Component {
                         }
                         let time1 = dateTime1[1].split(":");
                         trainings.push([dateTime[0], time[0] + ":" + time[1] + "-" + time1[0] + ":" + time1[1], arr[i].ski, arr[i].tarif_txt,
-                            arr[i].id, arr[i].own_client, arr[i].is_booked_online]);
+                            arr[i].id, arr[i].own_client, arr[i].is_booked_online, arr[i]]);
                     } else {
                         trainings.push([dateTime[0], time[0] + ":" + time[1], arr[i].ski, arr[i].tarif_txt, arr[i].id, arr[i].own_client, arr[i].is_booked_online]);
                     }
@@ -444,7 +522,7 @@ class Instructor extends React.Component {
                 return (
                     <TableView>
                         <Section>
-                            <TrainingCell name="Дата" title2="Время" typeOfEquipment="Вид" title3="Тариф"/>
+                            <Text style={{backgroundColor: "white", fontSize: 17, padding: 15}}>Занятия сегодня</Text>
                             {trainings.map((training) => (
                                 this.instructorTraining(training)
                             ))}
@@ -482,13 +560,20 @@ class Instructor extends React.Component {
                     <View style={{display: "flex", flexDirection: "row", alignItems: "center",
                         paddingRight: 10,
                     }}>
-                    <TextInput
-                        style={{height: 40, width: 80,paddingLeft: 10,  fontSize: 20, border: "#AAAAAA", borderStyle: "solid", borderWidth: 1}}
-                        placeholder="Время начала занятия"
-                        onChangeText={(text) => {
-                            this.onInstructorEventDateStartTime(text)}}
-                        defaultValue={"14:00"}
-                    />
+                        <Text style={{textAlign: 'center', alignItems: 'center'}}>
+                            Время начала:
+                        </Text>
+
+                        <DateTimePicker
+                          style={{ height: 50, width: 100}}
+                          value={this.state.startTime}
+                          mode="time"
+                          is24Hour={true}
+                          display="default"
+                          timeZoneOffsetInMinutes={60*6}
+                          onChange={this.onTimeChange.bind(this)}
+                          minuteInterval={15}
+                        />
                     </View>
                     <View style={{flex: 1, flexDirection: 'column'}}>
 
@@ -511,32 +596,49 @@ class Instructor extends React.Component {
                                 />
                         </View>
                     <Text style={{textAlign: 'center', alignItems: 'center'}}>
-                        Продолжительность:
+                        Продолжительность часов:
                     </Text>
-                        <CheckBox
-                                    left
-                                    title='1 час'
-                                    onPress={()=>this.onInstructorEventDateEnd(1)}
-                                    checkedIcon='dot-circle-o'
-                                    uncheckedIcon='circle-o'
-                                    checked={this.state.duration===1}
-                                />
-                        <CheckBox
-                                    left
-                                    title='1.5 часа'
-                                    onPress={()=>this.onInstructorEventDateEnd(1.5)}
-                                    checkedIcon='dot-circle-o'
-                                    uncheckedIcon='circle-o'
-                                    checked={this.state.duration===1.5}
-                                />
-                        <CheckBox
-                                    left
-                                    title='2 часа'
-                                    onPress={()=>this.onInstructorEventDateEnd(2)}
-                                    checkedIcon='dot-circle-o'
-                                    uncheckedIcon='circle-o'
-                                    checked={this.state.duration===2}
-                                />
+                        <View style={{flexDirection: 'row'}}>
+
+                            <CheckBox
+                                        left
+                                        title='1'
+                                        onPress={()=>this.onInstructorEventDateEnd(1)}
+                                        checkedIcon='dot-circle-o'
+                                        uncheckedIcon='circle-o'
+                                        checked={this.state.duration===1}
+                                    />
+                            <CheckBox
+                                        left
+                                        title='1.5'
+                                        onPress={()=>this.onInstructorEventDateEnd(1.5)}
+                                        checkedIcon='dot-circle-o'
+                                        uncheckedIcon='circle-o'
+                                        checked={this.state.duration===1.5}
+                                    />
+                            <CheckBox
+                                        left
+                                        title='2'
+                                        onPress={()=>this.onInstructorEventDateEnd(2)}
+                                        checkedIcon='dot-circle-o'
+                                        uncheckedIcon='circle-o'
+                                        checked={this.state.duration===2}
+                                    />
+                        </View>
+                    <Text style={{textAlign: 'center', alignItems: 'center'}}>
+                        Заметки:
+                    </Text>
+                        <TextInput
+                            value={this.state.notes}
+                            style={{
+                                height: 40,
+                                margin: 12,
+                                borderWidth: 1,
+                                paddingLeft: 12,
+                                paddingRight: 12,
+                            }}
+                            onChangeText={(text)=>{this.setState({"notes":text})}}
+                        ></TextInput>
 
                     </View>
 
@@ -568,8 +670,10 @@ class Instructor extends React.Component {
             instructorEventStartTime,
             instructorEventEnd,
             instructorSkillSki,
-            instructorSkillSnowboard
+            instructorSkillSnowboard,
+            notes: this.state.notes,
         });
+        this.setState({showNewForm: false})
     };
 
     onInstructorEventDateStart(date) {
@@ -623,6 +727,7 @@ class Instructor extends React.Component {
     }
 
     instructorTraining(training) {
+        const eventObject = training[7];
         if (training[5]) {
             return (
                 <Cell key={training[0]+training[1]}
@@ -634,25 +739,39 @@ class Instructor extends React.Component {
                             <Text
                                 allowFontScaling
                                 numberOfLines={1}
-                                style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
-                                {training[0]}
+                                style={{flex: 1, fontSize: 14, textAlign: 'left'}}>
+                                {training[1]}
                             </Text>
 
                             <Text
                                 allowFontScaling
                                 numberOfLines={1}
-                                style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
-                                {training[1]}
+                                style={{flex: 1, fontSize: 14, textAlign: 'left'}}>
+                                {eventObject.rate} тг
                             </Text>
                             </View>
-                            <Text
-                                allowFontScaling
-                                numberOfLines={1}
-                                style={{flex: 1, fontSize: 14, textAlign: 'center'}}>
-                                {
-                                    this.renderEquipment(training[2])
-                                }, {training[3]}
-                            </Text>
+                            <View style={{
+                                flex: 1, flexDirection: 'column',
+                                marginRight: 10, marginLeft: 20,
+                                borderColor: "green",
+                                borderLeftWidth: 1,
+                                paddingLeft: 5,
+                            }}>
+                                <Text
+                                    allowFontScaling
+                                    numberOfLines={1}
+                                    style={{flex: 1, fontSize: 14, textAlign: 'left'}}>
+                                    {
+                                        this.renderEquipment(training[2])
+                                    }, {training[3]}
+                                </Text>
+                                <Text
+                                    allowFontScaling
+                                    // numberOfLines={1}
+                                    style={{flex: 1, fontSize: 14, textAlign: 'left'}}>
+                                    {eventObject.trainer_note}
+                                </Text>
+                            </View>
 
                             <TouchableOpacity onPress={this.deleteEvent.bind(this, training[4])}>
                                 <Icon name="close" size={20}/>

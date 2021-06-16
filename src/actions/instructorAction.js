@@ -288,7 +288,11 @@ export const instructorAddEventEnd = (time) => {
 };
 
 
-export const instructorAddEventToServer = ({user, id, name, rating, text, instructorEventStartDate, instructorEventStartTime, instructorEventEnd, instructorSkillSki, instructorSkillSnowboard}) => {
+export const instructorAddEventToServer = (
+    {
+        user, id, name, rating, text, instructorEventStartDate,
+        instructorEventStartTime, instructorEventEnd, instructorSkillSki,
+        instructorSkillSnowboard, notes,}) => {
     // console.log("This is token", user.token + " " + id);
     return (dispatch) => {
         console.log("This is event ", user.token, id, name, rating, text, instructorEventStartDate,instructorEventStartTime, instructorEventEnd, instructorSkillSki, instructorSkillSnowboard);
@@ -308,6 +312,7 @@ export const instructorAddEventToServer = ({user, id, name, rating, text, instru
                     resource: id,
                     resource_txt: name,
                     resource_rating: rating,
+                    trainer_note: notes,
                     ski: instructorSkillSki,
                     board: instructorSkillSnowboard,
                     tarif: 1,
