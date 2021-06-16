@@ -1,5 +1,5 @@
 import {
-    INSTRUCTOR_CURRENT_DATE,
+    INSTRUCTOR_CURRENT_DATE, INSTRUCTOR_DETAIL_TEXT,
     INSTRUCTOR_DETAIL_ADD_EVENT, INSTRUCTOR_DETAIL_EVENT_END,
     INSTRUCTOR_DETAIL_EVENT_START, INSTRUCTOR_DETAIL_HIDE_EVENT, INSTRUCTOR_EVENTS_ON_DATE, INSTRUCTOR_RELOAD,
     INSTRUCTOR_REPORT_END,
@@ -27,6 +27,8 @@ export default (state = INITIAL_STATE, action) => {
             return {...state, showAddEvent: true, showAddReport: false};
         case INSTRUCTOR_SHOW_REPORT:
             return {...state, showAddReport: true, showAddEvent: false};
+        case INSTRUCTOR_DETAIL_TEXT:
+            return {...state, text: action.payload};
         case INSTRUCTOR_DETAIL_EVENT_START:
             return {...state, instructorEventStart: action.payload};
         case INSTRUCTOR_DETAIL_EVENT_END:

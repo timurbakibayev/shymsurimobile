@@ -1081,7 +1081,7 @@ class Instructors extends React.Component {
     };
 
     onSaveEvent = (instructor) => {
-        const {user, showAddEvent, instructorEventStartTime, instructorEventStartDate,  instructorEventEnd, instructorSkillSki, instructorSkillSnowboard} = this.props;
+        const {user, showAddEvent, text, instructorEventStartTime, instructorEventStartDate,  instructorEventEnd, instructorSkillSki, instructorSkillSnowboard} = this.props;
         const {id, name, rating} = instructor;
         // console.log("All about instructor", id + " " + name + " " + rating + " " + user.token);
         // console.log("This is event to save ", instructorEventStart + " " + instructorEventEnd);
@@ -1090,6 +1090,7 @@ class Instructors extends React.Component {
             id,
             name,
             rating,
+            text,
             instructorEventStartDate,
             instructorEventStartTime,
             instructorEventEnd,
@@ -1220,6 +1221,7 @@ const mapStateToProps = ({users, auth}) => {
         instructorReportEnd,
         instructorCurrentDate,
         instructorEventsOnDate,
+        text,
         instructorEventStartDate,
         instructorEventStartTime,
         instructorEventEnd,
@@ -1250,6 +1252,7 @@ const mapStateToProps = ({users, auth}) => {
         instructorEventEnd,
         instructorCurrentDate,
         instructorEventsOnDate,
+        text,
         instructorEventStartDate,
         instructorEventStartTime,
         reports,

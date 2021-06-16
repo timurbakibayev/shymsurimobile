@@ -1,6 +1,7 @@
 import {
     INSTRUCTOR_AT_WORK_FROM_SERVER,
     INSTRUCTOR_DATA_LOADING,
+    INSTRUCTOR_DETAIL_TEXT,
     INSTRUCTOR_DETAIL_ADD_EVENT,
     INSTRUCTOR_DETAIL_EVENT_END,
     INSTRUCTOR_DETAIL_EVENT_START,
@@ -40,6 +41,7 @@ const INITIAL_STATE = {
     instructorReportStart: '',
     instructorReportEnd: '',
     reports: [],
+    text: '',
     instructorEventStartDate: '',
     instructorEventStartTime: '',
     instructorEventEnd: '',
@@ -113,6 +115,9 @@ export default (state = INITIAL_STATE, action) => {
             return {...state, reports: action.payload, reload: false, instructorDataLoading: false,
                 instructorReportsLoading: false,
             };
+        case INSTRUCTOR_DETAIL_TEXT:
+            console.log("changing text", action.payload);
+            return {...state, text: action.payload, instructorDataLoading: false };
         case INSTRUCTOR_DETAIL_EVENT_START:
             if (action.datetime == "date")
                 return {...state, instructorEventStartDate: action.payload, instructorDataLoading: false};

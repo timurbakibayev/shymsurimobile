@@ -70,6 +70,7 @@ export const REPORT_TRAINERS_SUCCESS = 'report_trainer_success';
 
 export const INSTRUCTOR_DETAIL_ADD_EVENT = 'instructor_add_event';
 export const INSTRUCTOR_SHOW_REPORT = 'instructor_show_report';
+export const INSTRUCTOR_DETAIL_TEXT = 'INSTRUCTOR_DETAIL_TEXT';
 export const INSTRUCTOR_DETAIL_EVENT_START = 'instructor_event_start';
 export const INSTRUCTOR_DETAIL_EVENT_END = 'instructor_event_end';
 export const INSTRUCTOR_DETAIL_HIDE_EVENT = 'instructor_event_hide';
@@ -115,4 +116,4 @@ export const USER_LOGGED_IN = 'user_logged_in';
 // export const URL = "http://185.111.107.61/";
 export const URL = 'https://instructor-shym.kz/';
 
-export const VERSION = 'ТОО SAGRAD, Версия 12 от 30.11.2020';
+export const VERSION = 'ТОО SAGRAD, Версия 16 от 21.12.2020';

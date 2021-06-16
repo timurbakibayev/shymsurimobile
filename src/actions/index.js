@@ -1,4 +1,6 @@
-import {Permissions, Notifications} from 'expo';
+import Constants from 'expo-constants';
+import * as Permissions from 'expo-permissions';
+import * as Notifications from 'expo-notifications';
 import {
     USER_NAME_CHANGED, PASSWORD_CHANGED, LOGIN_USER_SUCCESS, LOGIN_USER_FAIL, LOGIN_USER,
     USERS_LOADING, USER_LOGOUT, USER_LOGGED_IN, URL
@@ -23,16 +25,14 @@ export const loginUser = ({userName, password}) => {
     return async (dispatch) => {
         dispatch({type: LOGIN_USER});
         console.log("This is user login password", userName, password, `${URL}auth/`);
-        // Notifications.getExpoPushTokenAsync()
-        //     .then((token) => {
-        //         console.log("This is a token ", token);
+        const token = await registerForPushNotificationsAsync();
+        console.log("This is a push token ", token);
         dispatch({type: "error", payload: "one"});
         let response = '';
         let the_body = JSON.stringify({
                         password: password,
                         username: userName,
-                        // device_id: token
-                        device_id: ""
+                        device_id: token
                     });
         dispatch({type: "error", payload: "Loading..."});
         try {
@@ -79,29 +79,35 @@ export const logOut = () => {
 };
 
 async function registerForPushNotificationsAsync() {
-    const {status: existingStatus} = await Permissions.getAsync(
-        Permissions.NOTIFICATIONS
-    );
+  let token;
+  if (Constants.isDevice) {
+    const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
     let finalStatus = existingStatus;
-
-    // only ask if permissions have not already been determined, because
-    // iOS won't necessarily prompt the user a second time.
     if (existingStatus !== 'granted') {
-        // Android remote notification permissions are granted during the app
-        // install, so this will only ask on iOS
-        const {status} = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-        finalStatus = status;
+      const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+      finalStatus = status;
     }
-
-    // Stop here if the user did not grant permissions
     if (finalStatus !== 'granted') {
-        return;
+      alert('Failed to get push token for push notification!');
+      return "";
     }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(token);
+  } else {
+    alert('Must use physical device for Push Notifications');
+    return "";
+  }
 
-    // Get the token that uniquely identifies this device
-    let token = await Notifications.getExpoPushTokenAsync().then((response) => console.log("This is toke response", response));
-    console.log("this is toke on push", token);
-    return token;
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  return token;
 }
 
 const loginUserFailed = (dispatch) => {
